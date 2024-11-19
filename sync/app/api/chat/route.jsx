@@ -8,7 +8,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Invalid messages format' }, { status: 400 });
   }
 
-  // 메시지에서 불필요한 필드 제거
+
   const filteredMessages = messages.map((msg) => ({
     role: msg.role,
     content: msg.content,
