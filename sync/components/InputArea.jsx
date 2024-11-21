@@ -1,7 +1,10 @@
 // /components/InputArea.jsx
 import styled from "styled-components";
 
-const InputAreaContainer = styled.div`
+
+const InputAreaContainer = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== 'isMinimized',
+  })`
     display: flex;
     width: 100%;
     background-color: transparent;
@@ -21,10 +24,10 @@ const InputAreaContainer = styled.div`
         }
     }
     ${(props) =>
-        props.isMinimized &&
+        !props.isMinimized &&
         `
     margin-top: 8px;
-    
+    width: 1208px;
   `}
 `;
 const SendButton = styled.button`
@@ -43,9 +46,9 @@ const SendButton = styled.button`
         top: 14px;
         right: 14px;
     }
-    &:hover {
-        background: linear-gradient(136deg, #8975f4 15.04%, #2600ff 86.06%);
-    }
+    // &:hover {
+    //     background: linear-gradient(136deg, #8975f4 15.04%, #2600ff 86.06%);
+    // }
 `;
 
 export default function InputArea({
@@ -61,13 +64,17 @@ export default function InputArea({
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Please describe the sample you want to generate."
+                placeholder={
+                    !isMinimized
+                        ? "Please describe the sample you want to generate."
+                        : "Add more Details"
+                }
             />
             <SendButton
                 className="flex justify-center items-center"
                 onClick={sendMessage}
             >
-                <img src="img/components/Subtract.svg" alt="" />
+                <img src="/img/components/Subtract.svg" alt="" />
             </SendButton>
         </InputAreaContainer>
     );

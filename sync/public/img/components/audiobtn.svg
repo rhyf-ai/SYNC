@@ -1,0 +1,25 @@
+<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 3">
+<g id="Group 2">
+<g id="generate_icon">
+<rect id="Rectangle 6" x="3" y="3" width="28" height="28" rx="4.17243" fill="white" fill-opacity="0.25" stroke="#5436FF" stroke-width="2"/>
+<g id="light_effect" filter="url(#filter0_f_307_545)">
+<rect x="3" y="3" width="28" height="28" rx="4.17243" stroke="#5436FF" stroke-width="2"/>
+</g>
+</g>
+</g>
+<g id="Rectangle 9">
+<mask id="path-3-inside-1_307_545" fill="white">
+<rect x="10" y="10" width="13" height="13" rx="1"/>
+</mask>
+<rect x="10" y="10" width="13" height="13" rx="1" stroke="#5436FF" stroke-width="4" mask="url(#path-3-inside-1_307_545)"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_307_545" x="0" y="0" width="34" height="34" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1" result="effect1_foregroundBlur_307_545"/>
+</filter>
+</defs>
+</svg>

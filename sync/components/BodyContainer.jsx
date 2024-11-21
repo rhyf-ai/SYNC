@@ -1,25 +1,9 @@
-"use client";
-import styled from "styled-components";
+'use client'
 
-const StyledContainer = styled.div`
-    background: radial-gradient(
-            circle at 35% 50%,
-            rgba(63, 45, 124, 0.2),
-            transparent 50%
-        ),
-        radial-gradient(
-            circle at 65% 50%,
-            #3f2d7c80,
-            transparent 50%
-        ),
-        var(--point-bgd);
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
+import React from "react";
+import "./style/bodycontainer.css"; // CSS 파일 임포트
+import { useShowChatStore } from "@/app/stores/showChatStore";
 export default function BodyContainer({ children }) {
-    return <StyledContainer>{children}</StyledContainer>;
+    const isMinimized = useShowChatStore((state) => state.isMinimized);
+    return <div className={isMinimized ? 'styled-container' : 'styled-container flex justify-center items-center'}>{children}</div>;
 }
