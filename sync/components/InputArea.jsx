@@ -114,7 +114,6 @@ export default function InputArea({
                 onClick={sendMessage}
             >
                 <img src="/img/components/Subtract.svg" alt="" />
-                hihi
             </SendButton>
             </div>
             
