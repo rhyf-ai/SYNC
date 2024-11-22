@@ -55,7 +55,7 @@ export async function POST(request) {
         role: data.choices[0].message.role,
         content: data.choices[0].message.content,
       };
-      return NextResponse.json({ reply: assistantMessage });
+      return NextResponse.json({ reply: assistantMessage, audioUrl: '/samples/audio_sample.mp3' });
     } else {
       console.error('Unexpected response structure:', data);
       return NextResponse.json({ error: 'Unexpected response structure' }, { status: 500 });

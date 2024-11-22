@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useMessagesStore } from "../app/stores/messagesStore";
 import { useShowChatStore } from "../app/stores/showChatStore";
-import { Messages, MessageContainer, MessageBubble } from "./MessageComponents";
+import { Messages, MessageContainer, MessageBubble, AssistantMessageBubble } from "./MessageComponents";
 import InputArea from "./InputArea";
 import { useRouter } from "next/navigation";
 import { div } from "framer-motion/client";
@@ -25,7 +25,8 @@ const Container = styled.div.withConfig({
             ? css`
                   width: 30%;
                   height: 100vh;
-                  /* 최소화된 상태의 추가 스타일 */
+                  padding: 3vw;
+                  background-color: rgba(63, 45, 124, 0.05)
               `
             : css`
                   width: 100%;
@@ -59,6 +60,7 @@ const RecordBtn = styled.button`
     align-items: center;
     font-weight: 700;
     font-size: 20px;
+    
 `;
 
 export default function ChatWindow() {
@@ -96,6 +98,7 @@ export default function ChatWindow() {
                 const assistantMessage = {
                     role: data.reply.role,
                     content: data.reply.content,
+                    audioUrl: data.audioUrl,
                 };
                 addMessage(assistantMessage);
             } else if (data.error) {
@@ -129,9 +132,11 @@ export default function ChatWindow() {
             <Messages className={!isMinimized ? "hidden" : ""}>
                 {messages.map((msg, idx) => (
                     <MessageContainer key={idx} isUser={msg.role === "user"}>
-                        <MessageBubble isUser={msg.role === "user"}>
-                            <p>{msg.content}</p>
-                        </MessageBubble>
+                        {msg.role === "user" ? (
+                            <MessageBubble isUser={true}><p>{msg.content}</p></MessageBubble>
+                        ) : (
+                            <AssistantMessageBubble message={msg} />
+                        )}
                     </MessageContainer>
                 ))}
             </Messages>

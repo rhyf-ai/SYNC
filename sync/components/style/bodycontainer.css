@@ -14,3 +14,9 @@
     width: 100vw;
 
 }
+
+.styled-container-bg {
+    background-image: url('/img/background/bg_2.png');
+    height: 100vh;
+    width: 100vw;
+}
