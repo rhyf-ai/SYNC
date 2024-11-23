@@ -3,8 +3,8 @@
 
 import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
 import CreateMusic from "./showTables/createMusic";
-import GiveSerum from "./showTables/giveSerum";
-import ToneTransfer from "./showTables/toneTransfer";
+import GiveSerum from "./showTables/GiveSerum";
+import ToneTransfer from "./showTables/ToneTransfer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
