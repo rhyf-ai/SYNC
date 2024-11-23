@@ -1,6 +1,8 @@
 // components/showTables/toneTransfer.jsx
 import styled from "styled-components";
+import customDropdowm from "./CustomDropdown";
 import { useState } from "react";
+import CustomDropdown from "./CustomDropdown";
 
 const SelectWrapper = styled.div`
     position: relative;
@@ -40,16 +42,7 @@ const DropdownIcon = styled.div`
 export default function ToneTransfer({ intent, content }) {
     return (
         <div>
-            <SelectWrapper>
-                <StyledSelect>
-                    <option value="clarinet">Clarinet</option>
-                    <option value="drum">Drum</option>
-                    <option value="piano">Piano</option>
-                    <option value="bass">Bass</option>
-                    <option value="guitar">Guitar</option>
-                </StyledSelect>
-                <DropdownIcon>▼</DropdownIcon>
-            </SelectWrapper>
+            <CustomDropdown />
         </div>
     );
 }
