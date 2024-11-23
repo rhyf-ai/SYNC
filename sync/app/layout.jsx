@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="ko">
-            <body style={{ margin: 0, padding: 0 }}>
+            <body style={{ margin: 0, padding: 0, minWidth: '1280px' }}>
                 <BodyContainer>
                     <Header />
                     <div className="flex">

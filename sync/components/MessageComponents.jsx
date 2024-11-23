@@ -2,6 +2,9 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
+
+
 import {
     faPause,
     faPlay,
@@ -75,10 +78,11 @@ const ArrowButton = styled.button`
     /* 스타일 추가 */
 `;
 
-export function AssistantMessageBubble({ message }) {
+export function AssistantMessageBubble({ message, id, onArrowClick}) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [audioTime, setAudioTime] = useState(0);
     const [audioPercentage, setAudioPercentage] = useState(0);
+
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -113,6 +117,7 @@ export function AssistantMessageBubble({ message }) {
     return (
         <BubbleContainer>
             <ResponseText>{message.content}</ResponseText>
+            <p>{message.intent}</p>
             <MusicIcon
                     src="/img/components/music-icon.svg"
                     alt="Music Icon"
@@ -133,7 +138,7 @@ export function AssistantMessageBubble({ message }) {
                     value={audioTime}
                     onChange={handleSliderChange}
                 />
-                <ArrowButton>
+                <ArrowButton onClick={()=> onArrowClick(message)}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </ArrowButton>
             </AudioControls>

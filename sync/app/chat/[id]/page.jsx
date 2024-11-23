@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import ShowTables from "../../../components/ShowTables";
 import { useShowChatStore } from "@/app/stores/showChatStore";
+import { useMessagesStore } from "@/app/stores/messagesStore";
 
 export default function ChatPage({ params }) {
     const setIsMinimized = useShowChatStore((state) => state.setIsMinimized);
+    const messages = useMessagesStore((state) => state.messages);
     const [id, setId] = useState(null);
 
     useEffect(() => {
@@ -29,8 +31,9 @@ export default function ChatPage({ params }) {
     }
 
     return (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", flexGrow: '1' }}>
             <div className="flex-grow">
+                <div style={{height: '50px'}}></div>
                 <ShowTables chatId={id} />
             </div>
         </div>

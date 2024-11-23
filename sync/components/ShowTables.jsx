@@ -1,11 +1,54 @@
 "use client";
-import styled from "styled-components";
+// components/ShowTables.jsx
 
-export default function ShowTables({ chatId }) {
+import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
+import CreateMusic from "./showTables/createMusic";
+import GiveSerum from "./showTables/giveSerum";
+import ToneTransfer from "./showTables/toneTransfer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+
+export default function ShowTables() {
+    const [toggleHistoryList, setToggleHistoryList] = useState(false);
+    const selectedMessage = useSelectedMessageStore(
+        (state) => state.selectedMessage
+    );
+
+    if (!selectedMessage) {
+        return <div>No message selected.</div>;
+    }
+
+    const { content, intent, id } = selectedMessage;
+
+    let ComponentToRender;
+
+    switch (intent) {
+        case "createMusic":
+            ComponentToRender = CreateMusic;
+            break;
+        case "giveSerum":
+            ComponentToRender = GiveSerum;
+            break;
+        case "toneTransfer":
+            ComponentToRender = ToneTransfer;
+            break;
+        default:
+            ComponentToRender = null;
+    }
+
     return (
-        <div>
-            <h1>Chat ID: {chatId}</h1>
-            hiHi
+        <div className="p-10 pr-20">
+            <div className="flex justify-end pb-5">
+                <button
+                    onClick={() => setToggleHistoryList(!toggleHistoryList)}
+                >
+                    <FontAwesomeIcon icon={faBars} style={{fontSize: '24px'}} />
+                </button>
+            </div>
+            {ComponentToRender && (
+                <ComponentToRender intent={intent} content={content} />
+            )}
         </div>
     );
 }

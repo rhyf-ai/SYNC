@@ -5,14 +5,20 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useMessagesStore } from "../app/stores/messagesStore";
 import { useShowChatStore } from "../app/stores/showChatStore";
-import { Messages, MessageContainer, MessageBubble, AssistantMessageBubble } from "./MessageComponents";
+import { useSelectedMessageStore } from "@/app/stores/selectedMessageStore";
+import {
+    Messages,
+    MessageContainer,
+    MessageBubble,
+    AssistantMessageBubble,
+} from "./MessageComponents";
 import InputArea from "./InputArea";
 import { useRouter } from "next/navigation";
 import { div } from "framer-motion/client";
 
 const Container = styled.div.withConfig({
-    shouldForwardProp: (prop) => prop !== 'isMinimized',
-  })`
+    shouldForwardProp: (prop) => prop !== "isMinimized",
+})`
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -23,10 +29,12 @@ const Container = styled.div.withConfig({
     ${(props) =>
         props.isMinimized
             ? css`
-                  width: 30%;
+                  width: 600px;
+                  min-width: 40%;
+                  max-width: 100%;
                   height: 100vh;
-                  padding: 3vw;
-                  background-color: rgba(63, 45, 124, 0.05)
+                  padding: min(3vw, 40px);
+                  background-color: rgba(63, 45, 124, 0.05);
               `
             : css`
                   width: 100%;
@@ -60,7 +68,6 @@ const RecordBtn = styled.button`
     align-items: center;
     font-weight: 700;
     font-size: 20px;
-    
 `;
 
 export default function ChatWindow() {
@@ -69,20 +76,37 @@ export default function ChatWindow() {
     const isShow = useShowChatStore((state) => state.isShow);
     const isMinimized = useShowChatStore((state) => state.isMinimized);
     const setIsMinimized = useShowChatStore((state) => state.setIsMinimized);
-
+    const setSelectedMessage = useSelectedMessageStore((state) => state.setSelectedMessage);
+    const [chatId, setChatId] = useState(null);
     const [input, setInput] = useState("");
     const router = useRouter();
 
+    const handleArrowClick = (message) => {
+        setSelectedMessage(message);
+    };
+
+    useEffect(() => {
+        if (!isMinimized && !chatId) {
+            // 처음 대화를 시작할 때 chatId 생성
+            const newChatId = Date.now().toString();
+            setChatId(newChatId);
+        }
+    }, [isMinimized, chatId]);
     const sendMessage = async () => {
         if (!input.trim()) return;
 
-        const userMessage = { role: "user", content: input };
+        const userMessage = {
+            role: "user",
+            content: input,
+            intent: "question",
+        };
         addMessage(userMessage);
         setInput("");
 
         const filteredMessages = [...messages, userMessage].map((msg) => ({
             role: msg.role,
             content: msg.content,
+            intent: msg.intent,
         }));
 
         try {
@@ -98,15 +122,13 @@ export default function ChatWindow() {
                 const assistantMessage = {
                     role: data.reply.role,
                     content: data.reply.content,
+                    intent: data.reply.intent,
                     audioUrl: data.audioUrl,
                 };
                 addMessage(assistantMessage);
             } else if (data.error) {
                 console.error("Error from API:", data.error);
             }
-
-            // 새로운 채팅 ID 생성 (예: 임의 숫자)
-            const chatId = Date.now(); // 간단히 현재 시간으로 생성
 
             // 애니메이션을 위해 isMinimized 상태를 true로 변경
             setIsMinimized(true);
@@ -126,16 +148,20 @@ export default function ChatWindow() {
 
     return (
         <Container isMinimized={isMinimized}>
-            {isMinimized && (
-                <div style={{height: '120px'}}></div>
-            )}
+            {isMinimized && <div style={{ height: "120px" }}></div>}
             <Messages className={!isMinimized ? "hidden" : ""}>
                 {messages.map((msg, idx) => (
                     <MessageContainer key={idx} isUser={msg.role === "user"}>
                         {msg.role === "user" ? (
-                            <MessageBubble isUser={true}><p>{msg.content}</p></MessageBubble>
+                            <MessageBubble isUser={true}>
+                                <p>{msg.content}</p>
+                            </MessageBubble>
                         ) : (
-                            <AssistantMessageBubble message={msg} />
+                            <AssistantMessageBubble
+                                message={msg}
+                                id={idx}
+                                onArrowClick={handleArrowClick}
+                            />
                         )}
                     </MessageContainer>
                 ))}
