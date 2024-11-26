@@ -3,6 +3,7 @@ import styled from "styled-components";
 import customDropdowm from "./CustomDropdown";
 import { useState } from "react";
 import CustomDropdown from "./CustomDropdown";
+import PlayMusic from "./PlayMusic";
 
 const SelectWrapper = styled.div`
     position: relative;
@@ -39,10 +40,32 @@ const DropdownIcon = styled.div`
     color: #ffffff;
 `;
 
-export default function ToneTransfer({ intent, content }) {
+const ExportBtn = styled.button`
+    border: none;
+    background-color: white;
+    color: #5436ff;
+    border-radius: 100px;
+    padding: 14px 48px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 16px;
+`;
+
+export default function ToneTransfer({ intent, content, audio }) {
     return (
         <div>
             <CustomDropdown />
+            <div className="h-60 w-full rounded-2xl bg-gray-300 my-6">
+                add Something
+            </div>
+            <PlayMusic audio={audio} />
+            <div className="flex justify-end gap-4 mt-5">
+                <ExportBtn>Export as WAV</ExportBtn>
+                <ExportBtn>Export as MIDI</ExportBtn>
+            </div>
         </div>
     );
 }

@@ -8,6 +8,7 @@ import ToneTransfer from "./showTables/ToneTransfer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { audio } from "framer-motion/client";
 
 export default function ShowTables() {
     const [toggleHistoryList, setToggleHistoryList] = useState(false);
@@ -19,7 +20,7 @@ export default function ShowTables() {
         return <div>No message selected.</div>;
     }
 
-    const { content, intent, id } = selectedMessage;
+    const { content, intent, id, audioUrl } = selectedMessage;
 
     let ComponentToRender;
 
@@ -47,7 +48,7 @@ export default function ShowTables() {
                 </button>
             </div>
             {ComponentToRender && (
-                <ComponentToRender intent={intent} content={content} />
+                <ComponentToRender intent={intent} content={content} audio={audioUrl} />
             )}
         </div>
     );

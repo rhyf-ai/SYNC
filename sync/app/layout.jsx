@@ -4,8 +4,12 @@ import BodyContainer from "@/components/BodyContainer";
 import ChatWindow from "@/components/ChatWindow";
 import Header from "@/components/Header";
 export const metadata = {
-    title: "음악 샘플링 프로그램",
-    description: "LLM과 오픈 소스를 이용한 음악 샘플링 애플리케이션",
+    title: "Rhyf.ai",
+    description: "AI-powered music creation platform.",
+    icons: {
+        icon: "/img/logo/favicon.png",
+        touchicon: "/img/logo/favicon.png",
+    },
 };
 
 export default function RootLayout({ children }) {

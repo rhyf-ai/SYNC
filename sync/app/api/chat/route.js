@@ -1,11 +1,19 @@
 // /app/api/chat/route.js
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST(request) {
-  const { messages } = await request.json();
+  const formData = await request.formData();
+
+  const messagesJson = formData.get("messages");
+  const messages = JSON.parse(messagesJson);
+
+  const audioFile = formData.get("audio"); // 오디오 파일
 
   if (!messages || !Array.isArray(messages)) {
-    return NextResponse.json({ error: 'Invalid messages format' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid messages format" },
+      { status: 400 }
+    );
   }
 
   let previousIntent = null;
@@ -16,32 +24,99 @@ export async function POST(request) {
     }
   }
 
-
-
-
   const latestUserMessage = messages[messages.length - 1];
-  if (!latestUserMessage || latestUserMessage.role !== 'user') {
-    return NextResponse.json({ error: 'No user message found' }, { status: 400 });
+  if (!latestUserMessage || latestUserMessage.role !== "user") {
+    return NextResponse.json(
+      { error: "No user message found" },
+      { status: 400 }
+    );
   }
 
-  const intent = await detectIntent(latestUserMessage.content, previousIntent);
-
+  let intent = null;
+  // 최신 메시지에 intent가 포함되어 있고, 이전 intent가 없는 경우 (초기 메시지)
+  if (latestUserMessage.intent && !previousIntent) {
+    intent = latestUserMessage.intent;
+  } else {
+    // intent를 감지합니다.
+    intent = await detectIntent(latestUserMessage.content, previousIntent);
+  }
+  console.log(intent)
   latestUserMessage.intent = intent;
 
-  const filteredMessages = messages.map((msg) => ({
-    role: msg.role,
-    content: msg.content,
-  }));
+  const text = latestUserMessage.content;
 
+  const externalApiResponse = await callExternalApi(intent, text, audioFile);
+
+  if (externalApiResponse.success) {
+    const gptMessage = `
+      내가 보낸 프롬프트: ${text}
+      받은 결과: 성공
+      따라서 성공적으로 오디오파일이 생성되었다는 내용으로 내가 보낸 프롬프트의 문맥을 파악해서 한 문장으로 답변을 생성해서 보내줘. 이때 언어는 사용자가 사용한 언어와 동일한 언어로 답변을 보내줘.
+    `;
+
+    // GPT에게 응답을 생성하도록 요청합니다.
+    const assistantMessage = await generateGptResponse(messages, gptMessage);
+
+    // 결과를 반환합니다.
+    return NextResponse.json({
+      reply: assistantMessage,
+      audioUrl: externalApiResponse.audioUrl, // 외부 API에서 받은 audioUrl
+      fileUrl: externalApiResponse.fileUrl, // 외부 API에서 받은 fileUrl (FXP 파일 등)
+    });
+  } else {
+    // 실패한 경우 처리
+    const errorMessage = `죄송합니다. 요청하신 작업을 수행하는 데 오류가 발생했습니다. 다시 시도해 주세요.`;
+
+    // GPT에게 에러 메시지를 생성하도록 요청합니다.
+    const assistantMessage = await generateGptResponse(messages, errorMessage);
+
+    return NextResponse.json({ reply: assistantMessage }, { status: 500 });
+  }
+}
+
+// 곧 없애셈
+async function callExternalApi(intent, text, audioFile) {
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      console.error('API key is missing');
-      return NextResponse.json({ error: 'API key is missing' }, { status: 500 });
+    const apiEndpoint = `https://external-api.com/${intent}`;
+
+    const formData = new FormData();
+    formData.append('text', text);
+    if (audioFile) {
+      formData.append('audio', audioFile, audioFile.name);
     }
 
-    const url = 'https://api.openai.com/v1/chat/completions';
+    const response = await fetch(apiEndpoint, {
+      method: 'POST',
+      body: formData,
+    });
 
+    if (!response.ok) {
+      console.error('External API call failed:', response.statusText);
+      return { success: false };
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      audioUrl: data.audioUrl,
+      fileUrl: data.fileUrl,
+    };
+  } catch (error) {
+    console.error('Error calling external API:', error);
+    return { success: false };
+  }
+}
+
+
+async function generateGptResponse(messages, gptMessage) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const url = 'https://api.openai.com/v1/chat/completions';
+
+  // 기존 메시지에 GPT 메시지를 추가
+  const updatedMessages = [...messages, { role: 'user', content: gptMessage }];
+
+  try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -50,7 +125,7 @@ export async function POST(request) {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: filteredMessages,
+        messages: updatedMessages,
         temperature: 0.7,
       }),
     });
@@ -58,7 +133,7 @@ export async function POST(request) {
     if (!response.ok) {
       const error = await response.json();
       console.error('Failed to fetch ChatGPT response:', error);
-      return NextResponse.json({ error: error.error.message }, { status: response.status });
+      throw new Error(error.error.message);
     }
 
     const data = await response.json();
@@ -72,28 +147,28 @@ export async function POST(request) {
       const assistantMessage = {
         role: data.choices[0].message.role,
         content: data.choices[0].message.content,
-        intent: intent,
+        intent: messages[messages.length - 1].intent,
       };
-      return NextResponse.json({ reply: assistantMessage, audioUrl: '/samples/audio_sample.mp3' });
+      return assistantMessage;
     } else {
       console.error('Unexpected response structure:', data);
-      return NextResponse.json({ error: 'Unexpected response structure' }, { status: 500 });
+      throw new Error('Unexpected response structure');
     }
   } catch (error) {
     console.error('Error fetching ChatGPT response:', error);
-    return NextResponse.json({ error: 'Error fetching ChatGPT response' }, { status: 500 });
+    throw new Error('Error fetching ChatGPT response');
   }
 }
 
 
 async function detectIntent(userMessage, previousIntent) {
   const apiKey = process.env.OPENAI_API_KEY;
-  const url = 'https://api.openai.com/v1/chat/completions';
+  const url = "https://api.openai.com/v1/chat/completions";
 
   // 프롬프트 설정
-  const messages = [
+  const messagesForIntent = [
     {
-      role: 'system',
+      role: "system",
       content: `
 당신은 사용자 메시지를 분석하여 다음 세 가지 intent 중 하나를 반환하는 어시스턴트입니다: 1: 'toneTransfer', 2: 'createMusic', 3: 'giveSerum'.
 tonetransfer의 예시: "내가 올린 음악파일을 클라리넷 사운드로 바꾸고 싶어."
@@ -106,9 +181,9 @@ giveSerum의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼
 `.trim(),
     },
     {
-      role: 'user',
+      role: "user",
       content: `
-이전 intent: ${previousIntent || '없음'}
+이전 intent: ${previousIntent || "없음"}
 사용자 메시지: ${userMessage}
 `.trim(),
     },
@@ -116,14 +191,14 @@ giveSerum의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: messages,
+        model: "gpt-4o-mini",
+        messages: messagesForIntent,
         temperature: 0,
         max_tokens: 10,
       }),
@@ -131,24 +206,24 @@ giveSerum의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Failed to detect intent:', error);
+      console.error("Failed to detect intent:", error);
       throw new Error(error.error.message);
     }
 
     const data = await response.json();
 
-    const intent = data.choices[0].message.content.trim();
+    const detectedIntent = data.choices[0].message.content.trim();
 
     // 의도한 세 가지 중 하나인지 확인
-    if (['toneTransfer', 'createMusic', 'giveSerum'].includes(intent)) {
-      return intent;
+    if (["toneTransfer", "createMusic", "giveSerum"].includes(detectedIntent)) {
+      return detectedIntent;
     } else {
       // 모델이 예상치 못한 응답을 할 경우 이전 intent를 반환
-      return previousIntent || 'toneTransfer'; // 기본값 설정 가능
+      return previousIntent || "toneTransfer"; // 기본값 설정 가능
     }
   } catch (error) {
-    console.error('Error detecting intent:', error);
+    console.error("Error detecting intent:", error);
     // 에러 발생 시 이전 intent 또는 기본 intent 반환
-    return previousIntent || 'toneTransfer';
+    return previousIntent || "toneTransfer";
   }
 }

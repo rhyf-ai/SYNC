@@ -1,7 +1,7 @@
 // components/ChatWindow.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useMessagesStore } from "../app/stores/messagesStore";
 import { useShowChatStore } from "../app/stores/showChatStore";
@@ -12,9 +12,10 @@ import {
     MessageBubble,
     AssistantMessageBubble,
 } from "./MessageComponents";
+import PlayMusic from "./showTables/PlayMusic";
 import InputArea from "./InputArea";
 import { useRouter } from "next/navigation";
-import { div } from "framer-motion/client";
+import { div, form } from "framer-motion/client";
 
 const Container = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isMinimized",
@@ -76,10 +77,79 @@ export default function ChatWindow() {
     const isShow = useShowChatStore((state) => state.isShow);
     const isMinimized = useShowChatStore((state) => state.isMinimized);
     const setIsMinimized = useShowChatStore((state) => state.setIsMinimized);
-    const setSelectedMessage = useSelectedMessageStore((state) => state.setSelectedMessage);
+    const setSelectedMessage = useSelectedMessageStore(
+        (state) => state.setSelectedMessage
+    );
+    const [intent, setIntent] = useState("CreateMusic");
+
+    const intents = ["CreateMusic", "ToneTransfer", "GiveSerum"];
+
     const [chatId, setChatId] = useState(null);
     const [input, setInput] = useState("");
     const router = useRouter();
+
+    //첨부파일 구성
+    const [selectedFile, setSelectedFile] = useState(null);
+    const inputFileRef = useRef(null);
+
+    //녹음파일 구성
+    const [recordedBlob, setRecordedBlob] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorderRef = useRef(null);
+
+    //오디오 객체 URL 생성
+    const [audioSrc, setAudioSrc] = useState(null);
+
+    useEffect(() => {
+        //useEffect를 사용하여 오디오 객체 URL 생성
+        let url = null;
+        if (selectedFile) {
+            url = URL.createObjectURL(selectedFile);
+            setAudioSrc(url);
+        } else if (recordedBlob) {
+            url = URL.createObjectURL(recordedBlob);
+            setAudioSrc(url);
+        } else {
+            setAudioSrc(null);
+        }
+        return () => {
+            if (url) {
+                URL.revokeObjectURL(url);
+            }
+        };
+    }, [selectedFile, recordedBlob]);
+
+    const handleRecordClick = () => {
+        if (isRecording) {
+            // 녹음 중지
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        } else {
+            // 녹음 시작
+            navigator.mediaDevices
+                .getUserMedia({ audio: true })
+                .then((stream) => {
+                    mediaRecorderRef.current = new MediaRecorder(stream);
+                    mediaRecorderRef.current.start();
+
+                    const audiochunks = [];
+                    mediaRecorderRef.current.addEventListener(
+                        "dataavailable",
+                        (event) => {
+                            audiochunks.push(event.data);
+                        }
+                    );
+
+                    mediaRecorderRef.current.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audiochunks, {
+                            type: "audio/wav",
+                        }); //수정필요하면 mp3 부분 수정
+                        setRecordedBlob(audioBlob);
+                    });
+                    setIsRecording(true);
+                });
+        }
+    };
 
     const handleArrowClick = (message) => {
         setSelectedMessage(message);
@@ -92,28 +162,49 @@ export default function ChatWindow() {
             setChatId(newChatId);
         }
     }, [isMinimized, chatId]);
-    const sendMessage = async () => {
-        if (!input.trim()) return;
 
+    //파일이 선택되면 녹음된 오디오 제거
+    useEffect(() => {
+        if (selectedFile) {
+            setRecordedBlob(null);
+        }
+    }, [selectedFile]);
+    //녹음이 완료되면 선택된 파일 제거
+    useEffect(() => {
+        if (recordedBlob) {
+            setSelectedFile(null);
+        }
+    }, [recordedBlob]);
+
+    const sendMessage = async () => {
+        if (!input.trim()) {
+            alert("Please enter some text.");
+            return;
+        }
         const userMessage = {
             role: "user",
             content: input,
-            intent: "question",
+            intent: isMinimized ? null : intent, // minimized되지 않았을 때만 intent 포함
         };
         addMessage(userMessage);
         setInput("");
 
-        const filteredMessages = [...messages, userMessage].map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-            intent: msg.intent,
-        }));
+        // 메시지 목록 업데이트
+        const updatedMessages = [...messages, userMessage];
 
+        const formData = new FormData();
+        formData.append("messages", JSON.stringify(updatedMessages));
+
+        if (selectedFile) {
+            formData.append("audio", selectedFile);
+        } else if (recordedBlob) {
+            formData.append("audio", recordedBlob, "recording.wav");
+        }
+        console.log(formData);
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages: filteredMessages }),
+                body: formData,
             });
 
             const data = await response.json();
@@ -123,7 +214,8 @@ export default function ChatWindow() {
                     role: data.reply.role,
                     content: data.reply.content,
                     intent: data.reply.intent,
-                    audioUrl: data.audioUrl,
+                    audioUrl: data.audioUrl || null,
+                    fileUrl: data.fileUrl || null,
                 };
                 addMessage(assistantMessage);
             } else if (data.error) {
@@ -166,6 +258,34 @@ export default function ChatWindow() {
                     </MessageContainer>
                 ))}
             </Messages>
+            {!isMinimized && (
+                <>
+                <div className="flex justify-start mb-10">
+                    {intents.map((item, index) => (
+                        <button
+                            key={item}
+                            className={`px-7 py-2
+              ${intent === item ? "text-white" : "text-white opacity-40"}
+              ${index === 0 ? "rounded-l-xl" : ""}
+              ${index === intents.length - 1 ? "rounded-r-xl" : ""}
+              bg-[rgba(255,255,255,0.1)]
+            `}
+                            onClick={() => setIntent(item)}
+                        >
+                            {item}
+                        </button>
+                    ))}
+                </div>
+                <p className="text-3xl my-5 font-semibold">
+                {intent === "ToneTransfer"
+                    ? "Please provide a description of the music you want to transfer the tone of."
+                    : intent === "CreateMusic"
+                    ? "Please provide a description of the music you want to create."
+                    : "Please provide a description of the music you want to give serum to."}
+            </p>
+            </>
+            )}
+            
             <InputArea
                 input={input}
                 setInput={setInput}
@@ -174,11 +294,28 @@ export default function ChatWindow() {
             />
             {!isMinimized && (
                 <div className="flex justify-center items-center gap-6 mt-10">
-                    <ReferenceBtn>Add Reference Audio</ReferenceBtn>
-                    <RecordBtn>
+                    <ReferenceBtn onClick={() => inputFileRef.current.click()}>
+                        <input
+                            type="file"
+                            accept="audio/*"
+                            ref={inputFileRef}
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                                if (e.target.files.length > 0)
+                                    setSelectedFile(e.target.files[0]);
+                            }}
+                        />
+                        Add Reference Audio
+                    </ReferenceBtn>
+                    <RecordBtn onClick={handleRecordClick}>
                         <img src="/img/components/audiobtn.svg" alt="" />
-                        <p>Record</p>
+                        <p>{isRecording ? "Stop Recording" : "Record"}</p>
                     </RecordBtn>
+                </div>
+            )}
+            {!isMinimized && audioSrc && (
+                <div className="flex justify-center items-center gap-6 mt-10">
+                    <PlayMusic audio={audioSrc} />
                 </div>
             )}
         </Container>

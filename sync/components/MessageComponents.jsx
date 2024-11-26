@@ -79,75 +79,16 @@ const ArrowButton = styled.button`
 `;
 
 export function AssistantMessageBubble({ message, id, onArrowClick}) {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [audioTime, setAudioTime] = useState(0);
-    const [audioPercentage, setAudioPercentage] = useState(0);
 
-    const audioRef = useRef(null);
-
-    useEffect(() => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.play();
-            } else {
-                audioRef.current.pause();
-            }
-        }
-    }, [isPlaying]);
-
-    const handleTimeUpdate = () => {
-        if (audioRef.current) {
-            const currentTime = audioRef.current.currentTime;
-            const duration = audioRef.current.duration;
-            const percentage = (currentTime / duration) * 100;
-            setAudioTime(percentage);
-        }
-    };
-
-    const handleSliderChange = (e) => {
-        const percentage = e.target.value;
-        if (audioRef.current) {
-            const duration = audioRef.current.duration;
-            const newTime = (percentage / 100) * duration;
-            audioRef.current.currentTime = newTime;
-            setAudioPercentage(percentage);
-        }
-    };
 
     return (
         <BubbleContainer>
             <ResponseText>{message.content}</ResponseText>
             <p>{message.intent}</p>
-            <MusicIcon
-                    src="/img/components/music-icon.svg"
-                    alt="Music Icon"
-                />
-            <AudioControls>
-                
-                <PlayButton onClick={() => setIsPlaying(!isPlaying)}>
-                    {isPlaying ? (
-                        <FontAwesomeIcon icon={faPause} />
-                    ) : (
-                        <FontAwesomeIcon icon={faPlay} />
-                    )}
-                </PlayButton>
-                <Slider
-                    type="range"
-                    min="0"
-                    max="100" // 오디오 길이에 따라 조절 필요
-                    value={audioTime}
-                    onChange={handleSliderChange}
-                />
+            
                 <ArrowButton onClick={()=> onArrowClick(message)}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </ArrowButton>
-            </AudioControls>
-            <audio
-                ref={audioRef}
-                src={message.audioUrl}
-                onTimeUpdate={handleTimeUpdate}
-                onEnded={() => setIsPlaying(false)}
-            />
         </BubbleContainer>
     );
 }
