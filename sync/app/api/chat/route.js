@@ -1,5 +1,6 @@
 // /app/api/chat/route.js
 import { NextResponse } from "next/server";
+import FormData from "form-data";
 
 export async function POST(request) {
   const formData = await request.formData();
@@ -8,6 +9,12 @@ export async function POST(request) {
   const messages = JSON.parse(messagesJson);
 
   const audioFile = formData.get("audio"); // 오디오 파일
+
+  console.log('audioFile:', {
+    name: audioFile.name,
+    size: audioFile.size,
+    type: audioFile.type,
+  });
 
   if (!messages || !Array.isArray(messages)) {
     return NextResponse.json(
@@ -85,15 +92,37 @@ async function callExternalApi(intent, text, audioFile) {
   try {
     const apiEndpoint = `https://external-api.com/${intent}`;
 
+
     const formData = new FormData();
     formData.append('text', text);
+
     if (audioFile) {
-      formData.append('audio', audioFile, audioFile.name);
+      // audioFile을 Buffer로 변환
+      const arrayBuffer = await audioFile.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // FormData에 audioFile 추가
+      formData.append('audio', buffer, {
+        filename: audioFile.name,
+        contentType: audioFile.type,
+      });
+    }
+    if (audioFile) {
+      // audioFile을 Buffer로 변환
+      const arrayBuffer = await audioFile.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // FormData에 audioFile 추가
+      formData.append('audio', buffer, {
+        filename: audioFile.name,
+        contentType: audioFile.type,
+      });
     }
 
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       body: formData,
+      headers: formData.getHeaders(),
     });
 
     if (!response.ok) {

@@ -12,6 +12,7 @@ import {
     MessageBubble,
     AssistantMessageBubble,
 } from "./MessageComponents";
+import InputToPrompt from './chatWindow/inputToPrompt'
 import PlayMusic from "./showTables/PlayMusic";
 import InputArea from "./InputArea";
 import { useRouter } from "next/navigation";
@@ -200,7 +201,9 @@ export default function ChatWindow() {
         } else if (recordedBlob) {
             formData.append("audio", recordedBlob, "recording.wav");
         }
-        console.log(formData);
+        for (let pair of formData.entries()) {
+            console.log(`${pair[0]}:`, pair[1]);
+        }
         try {
             const response = await fetch("/api/chat", {
                 method: "POST",
@@ -220,7 +223,6 @@ export default function ChatWindow() {
                 };
                 addMessage(assistantMessage);
                 setSelectedMessage(assistantMessage);
-
             } else if (data.error) {
                 console.error("Error from API:", data.error);
             }
@@ -263,32 +265,32 @@ export default function ChatWindow() {
             </Messages>
             {!isMinimized && (
                 <>
-                <div className="flex justify-start mb-10">
-                    {intents.map((item, index) => (
-                        <button
-                            key={item}
-                            className={`px-7 py-2
+                    <div className="flex justify-start mb-10">
+                        {intents.map((item, index) => (
+                            <button
+                                key={item}
+                                className={`px-7 py-2
               ${intent === item ? "text-white" : "text-white opacity-40"}
               ${index === 0 ? "rounded-l-xl" : ""}
               ${index === intents.length - 1 ? "rounded-r-xl" : ""}
               bg-[rgba(255,255,255,0.1)]
             `}
-                            onClick={() => setIntent(item)}
-                        >
-                            {item}
-                        </button>
-                    ))}
-                </div>
-                <p className="text-3xl my-5 font-semibold">
-                {intent === "ToneTransfer"
-                    ? "Please provide a description of the music you want to transfer the tone of."
-                    : intent === "CreateMusic"
-                    ? "Please provide a description of the music you want to create."
-                    : "Please provide a description of the music you want to give serum to."}
-            </p>
-            </>
+                                onClick={() => setIntent(item)}
+                            >
+                                {item}
+                            </button>
+                        ))}
+                    </div>
+                    <p className="text-3xl my-5 font-semibold">
+                        {intent === "ToneTransfer"
+                            ? "Please provide a description of the music you want to transfer the tone of."
+                            : intent === "CreateMusic"
+                            ? "Please provide a description of the music you want to create."
+                            : "Please provide a description of the music you want to give serum to."}
+                    </p>
+                </>
             )}
-            
+
             <InputArea
                 input={input}
                 setInput={setInput}
@@ -296,24 +298,29 @@ export default function ChatWindow() {
                 isMinimized={isMinimized}
             />
             {!isMinimized && (
-                <div className="flex justify-center items-center gap-6 mt-10">
-                    <ReferenceBtn onClick={() => inputFileRef.current.click()}>
-                        <input
-                            type="file"
-                            accept="audio/*"
-                            ref={inputFileRef}
-                            style={{ display: "none" }}
-                            onChange={(e) => {
-                                if (e.target.files.length > 0)
-                                    setSelectedFile(e.target.files[0]);
-                            }}
-                        />
-                        Add Reference Audio
-                    </ReferenceBtn>
-                    <RecordBtn onClick={handleRecordClick}>
-                        <img src="/img/components/audiobtn.svg" alt="" />
-                        <p>{isRecording ? "Stop Recording" : "Record"}</p>
-                    </RecordBtn>
+                <div>
+                    <InputToPrompt intent={intent} input={input} setInput={setInput} />
+                    <div className="flex justify-center items-center gap-6 mt-10">
+                        <ReferenceBtn
+                            onClick={() => inputFileRef.current.click()}
+                        >
+                            <input
+                                type="file"
+                                accept="audio/*"
+                                ref={inputFileRef}
+                                style={{ display: "none" }}
+                                onChange={(e) => {
+                                    if (e.target.files.length > 0)
+                                        setSelectedFile(e.target.files[0]);
+                                }}
+                            />
+                            Add Reference Audio
+                        </ReferenceBtn>
+                        <RecordBtn onClick={handleRecordClick}>
+                            <img src="/img/components/audiobtn.svg" alt="" />
+                            <p>{isRecording ? "Stop Recording" : "Record"}</p>
+                        </RecordBtn>
+                    </div>
                 </div>
             )}
             {!isMinimized && audioSrc && (
