@@ -45,6 +45,8 @@ export async function POST(request) {
 
   const text = latestUserMessage.content;
 
+  
+
   const externalApiResponse = await callExternalApi(intent, text, audioFile);
 
   if (externalApiResponse.success) {
@@ -62,6 +64,8 @@ export async function POST(request) {
       reply: assistantMessage,
       audioUrl: externalApiResponse.audioUrl, // 외부 API에서 받은 audioUrl
       fileUrl: externalApiResponse.fileUrl, // 외부 API에서 받은 fileUrl (FXP 파일 등)
+      giveSerumJson: externalApiResponse.json || null
+
     });
   } else {
     // 실패한 경우 처리
@@ -73,6 +77,8 @@ export async function POST(request) {
     return NextResponse.json({ reply: assistantMessage }, { status: 500 });
   }
 }
+
+
 
 // 곧 없애셈
 async function callExternalApi(intent, text, audioFile) {

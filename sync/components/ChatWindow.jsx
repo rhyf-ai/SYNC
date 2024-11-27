@@ -216,6 +216,7 @@ export default function ChatWindow() {
                     intent: data.reply.intent,
                     audioUrl: data.audioUrl || null,
                     fileUrl: data.fileUrl || null,
+                    json: data.giveSerumJson || null,
                 };
                 addMessage(assistantMessage);
                 setSelectedMessage(assistantMessage);
