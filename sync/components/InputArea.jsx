@@ -9,7 +9,7 @@ const InputAreaContainer = styled.div.withConfig({
     width: 100%;
     background-color: transparent;
     border: 2px solid #e2e8f0;
-    border-radius: 20px;
+    border-radius: 30px;
 
     /* 그라데이션 그림자 구현 */
     &::before {
@@ -28,7 +28,7 @@ const InputAreaContainer = styled.div.withConfig({
         );
         z-index: 0; /* 부모 요소와 동일한 z-index */
         filter: blur(4px); /* 그림자 효과 */
-        border-radius: 22px; /* 부모 요소보다 조금 더 큰 반경 */
+        border-radius: 32px; /* 부모 요소보다 조금 더 큰 반경 */
         pointer-events: none; /* 가상 요소가 이벤트를 받지 않도록 */
     }
 
@@ -41,13 +41,21 @@ const InputAreaContainer = styled.div.withConfig({
     & input {
         background-color: transparent;
         border: none;
-        font-size: 20px;
+        font-size: 18px;
         flex: 1;
         &:focus {
             outline: none;
         }
         &::placeholder {
-            font-size: 20px;
+            font-size: 18px;
+            background: linear-gradient(
+                90deg,
+                #fff 0%,
+                rgba(255, 255, 255, 0.3) 40.76%
+            );
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     }
 
@@ -68,7 +76,7 @@ const SendButton = styled.button`
     background: linear-gradient(136deg, #2600ff 15.04%, #8975f4 86.06%);
     box-shadow: 0px 10px 50px 0px rgba(8, 2, 45, 0.35);
     backdrop-filter: blur(50px);
-    margin: 4px;
+    margin: 6px;
     position: relative;
     & img {
         position: absolute;
@@ -80,6 +88,18 @@ const SendButton = styled.button`
     // &:hover {
     //     background: linear-gradient(136deg, #8975f4 15.04%, #2600ff 86.06%);
     // }
+`;
+
+const LoadingContainer = styled.div`
+    width: 100%;
+    border-radius: 30px;
+    background-color: #0f0332;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    color: white;
+    gap: 10px;
 `;
 
 export default function InputArea({
@@ -96,27 +116,34 @@ export default function InputArea({
     };
     return (
         <InputAreaContainer isMinimized={isMinimized}>
-            <div style={{width:'100%', borderRadius: '20px', backgroundColor: '#0F0332', display: 'flex', padding: '0px 20px'}}>
-            <input
-                className="border rounded w-full p-2"
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={
-                    !isMinimized
-                        ? "Please describe the sample you want to generate."
-                        : "Add more Details"
-                }
-            />
-            <SendButton
-                className="flex justify-center items-center"
-                onClick={sendMessage}
+            <div
+                style={{
+                    width: "100%",
+                    borderRadius: "30px",
+                    backgroundColor: "#0F0332",
+                    display: "flex",
+                    padding: "0px 4px 0px 20px",
+                }}
             >
-                <img src="/img/components/Subtract.svg" alt="" />
-            </SendButton>
+                <input
+                    className="border rounded w-full p-2"
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={
+                        !isMinimized
+                            ? "Please describe the sample you want to generate."
+                            : "Add more Details"
+                    }
+                />
+                <SendButton
+                    className="flex justify-center items-center"
+                    onClick={sendMessage}
+                >
+                    <img src="/img/components/Subtract.svg" alt="" />
+                </SendButton>
             </div>
-            
         </InputAreaContainer>
     );
 }

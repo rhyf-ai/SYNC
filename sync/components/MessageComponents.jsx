@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
 
-
 import {
     faPause,
     faPlay,
@@ -75,20 +74,24 @@ const Slider = styled.input`
 `;
 
 const ArrowButton = styled.button`
-    /* 스타일 추가 */
+    width: 40px;
+    font-size: 20px;
+    aspect-ratio: 1/1;
+    color: #fff;
+    background-color: #000;
+    border-radius: 50%;
 `;
 
-export function AssistantMessageBubble({ message, id, onArrowClick}) {
-
-
+export function AssistantMessageBubble({ message, id, onArrowClick }) {
     return (
         <BubbleContainer>
             <ResponseText>{message.content}</ResponseText>
             <p>{message.intent}</p>
-            
-                <ArrowButton onClick={()=> onArrowClick(message)}>
+            <div className="flex justify-end">
+                <ArrowButton onClick={() => onArrowClick(message)}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </ArrowButton>
+            </div>
         </BubbleContainer>
     );
 }

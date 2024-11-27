@@ -218,6 +218,8 @@ export default function ChatWindow() {
                     fileUrl: data.fileUrl || null,
                 };
                 addMessage(assistantMessage);
+                setSelectedMessage(assistantMessage);
+
             } else if (data.error) {
                 console.error("Error from API:", data.error);
             }
