@@ -24,7 +24,7 @@ const Header = () => {
                     alt=""
                 />
             </a>
-            <div className="self-end flex gap-20 text-xl">
+            <div className="self-end flex gap-20 text-xl font-semibold">
                 <a
                     href="/"
                     className="relative"
