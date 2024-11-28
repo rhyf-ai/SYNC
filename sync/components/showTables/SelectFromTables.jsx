@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import dummydata from "../../app/data/dummySerum.json";
 
 const Checkbox = styled.input.attrs({ type: "checkbox" })`
     /* 필요한 스타일을 여기에 추가하세요 */
@@ -19,6 +20,8 @@ const DownloadButton = styled.button`
 `;
 
 export default function SelectFromTables({ column, data }) {
+    const tableData = data ?? dummydata;
+
     const handleDownload = (filePath) => {
         // 파일 경로가 유효한지 확인
         if (!filePath) return;
@@ -33,44 +36,48 @@ export default function SelectFromTables({ column, data }) {
         link.click();
         document.body.removeChild(link);
     };
-    console.log(column,data)
+    console.log(column, tableData);
     return (
         <>
-            <table className="table-auto">
-                <thead>
-                    <tr>
-                        {column.map((col, index) => (
-                            <th key={index}>{col}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((item, index) => (
-                        <tr key={index}>
-                            {/* 첫 번째 열: 체크박스 */}
-                            <td>
-                                <Checkbox />
-                            </td>
-                            {/* 두 번째 열: Title */}
-                            <td>{item.title}</td>
-                            {/* 세 번째 열: Style */}
-                            <td>{item.style}</td>
-                            {/* 네 번째 열: File (필요에 따라 내용 추가) */}
-                            <td>{/* 파일 관련 추가 정보가 있다면 표시 */}</td>
-                            {/* 다섯 번째 열: 다운로드 버튼 */}
-                            <td>
-                                <DownloadButton
-                                    onClick={() =>
-                                        handleDownload(item.file_path)
-                                    }
-                                >
-                                    <FontAwesomeIcon icon={faDownload} />
-                                </DownloadButton>
-                            </td>
+            <div className="relative overflow-x-auto mt-10">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-400 table-auto">
+                    <thead className="text-xs uppercase bg-gray-700 text-gray-400 ">
+                        <tr>
+                            {column.map((col, index) => (
+                                <th scope="col" className="px-6 py-3 border-x border-gray-600" key={index}>{col}</th>
+                            ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {tableData.map((item, index) => (
+                            <tr className="bg-gray-800 border-gray-600 border-b" key={index}>
+                                {/* 첫 번째 열: 체크박스 */}
+                                <td className="px-6 py-4 border-x border-gray-600">
+                                    <Checkbox />
+                                </td>
+                                {/* 두 번째 열: Title */}
+                                <td className="px-6 py-4 border-x border-gray-600">{item.title}</td>
+                                {/* 세 번째 열: Style */}
+                                <td className="px-6 py-4 border-x border-gray-600">{item.style}</td>
+                                {/* 네 번째 열: File (필요에 따라 내용 추가) */}
+                                <td className="px-6 py-4 border-x border-gray-600">
+                                    {/* 파일 관련 추가 정보가 있다면 표시 */}
+                                </td>
+                                {/* 다섯 번째 열: 다운로드 버튼 */}
+                                <td className="px-6 py-4 border-x border-gray-600">
+                                    <DownloadButton
+                                        onClick={() =>
+                                            handleDownload(item.file_path)
+                                        }
+                                    >
+                                        <FontAwesomeIcon icon={faDownload} />
+                                    </DownloadButton>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </>
     );
 }

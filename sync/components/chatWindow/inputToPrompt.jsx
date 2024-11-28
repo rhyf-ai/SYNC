@@ -11,6 +11,7 @@ const Container = styled.div`
     padding: 30px;
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(50px);
+    margin-top: 57px;
 `;
 const SelectInputButton = styled.button`
     border: none;
@@ -35,7 +36,7 @@ const Divider = styled.div`
     opacity: 0.1;
 `;
 
-export default function InputToPrompt({ intent, input, setInput }) {
+export default function InputToPrompt({ input, setInput }) {
     const createMusicInstrumentList = [
         "Kicks",
         "Vocals",
@@ -46,9 +47,9 @@ export default function InputToPrompt({ intent, input, setInput }) {
         "Piano",
         "Strings",
         "fx",
-      ];
-      
-      const createMusicGenresList = [
+    ];
+
+    const createMusicGenresList = [
         "Hiphop",
         "Drum and Bass",
         "Trap",
@@ -58,65 +59,58 @@ export default function InputToPrompt({ intent, input, setInput }) {
         "EDM",
         "Disco",
         "Soul",
-      ];
-      
+    ];
 
     const handleButtonClick = (instrument) => {
         const newInput = input + " " + instrument;
         setInput(newInput);
     };
 
-    if (intent === "CreateMusic") {
-        return (
-            <Container>
-                <div className="p-3">
-                    <div className="flex gap-2">
-                        <img
-                            style={{ width: "30px" }}
-                            src="/img/components/instrument.svg"
-                            alt=""
-                        />
-                        <p className="font-semibold text-2xl">Instrument</p>
-                    </div>
-
-                    <div className="flex gap-3 py-5">
-                        {createMusicInstrumentList.map((instrument) => (
-                            <SelectInputButton
-                                key={instrument}
-                                onClick={() => handleButtonClick(instrument)}
-                            >
-                                {instrument}
-                            </SelectInputButton>
-                        ))}
-                    </div>
-                </div>
-                <Divider />
-                <div className="p-3">
+    return (
+        <Container>
+            <div className="p-3">
                 <div className="flex gap-2">
-                        <img
-                            style={{ width: "30px" }}
-                            src="/img/components/genre.svg"
-                            alt=""
-                        />
-                        <p className="font-semibold text-2xl">Genre</p>
-                    </div>
-
-                    <div className="flex gap-3 py-5">
-                        {createMusicGenresList.map((genre) => (
-                            <SelectInputButton
-                                key={genre}
-                                onClick={() => handleButtonClick(genre)}
-                            >
-                                {genre}
-                            </SelectInputButton>
-                        ))}
-                    </div>
+                    <img
+                        style={{ width: "30px" }}
+                        src="/img/components/instrument.svg"
+                        alt=""
+                    />
+                    <p className="font-semibold text-2xl">Instrument</p>
                 </div>
-            </Container>
-        );
-    } else if (intent === "ToneTransfer") {
-        return <Container></Container>;
-    } else {
-        return <Container></Container>;
-    }
+
+                <div className="flex gap-3 py-5">
+                    {createMusicInstrumentList.map((instrument) => (
+                        <SelectInputButton
+                            key={instrument}
+                            onClick={() => handleButtonClick(instrument)}
+                        >
+                            {instrument}
+                        </SelectInputButton>
+                    ))}
+                </div>
+            </div>
+            <Divider />
+            <div className="p-3">
+                <div className="flex gap-2">
+                    <img
+                        style={{ width: "30px" }}
+                        src="/img/components/genre.svg"
+                        alt=""
+                    />
+                    <p className="font-semibold text-2xl">Genre</p>
+                </div>
+
+                <div className="flex gap-3 py-5">
+                    {createMusicGenresList.map((genre) => (
+                        <SelectInputButton
+                            key={genre}
+                            onClick={() => handleButtonClick(genre)}
+                        >
+                            {genre}
+                        </SelectInputButton>
+                    ))}
+                </div>
+            </div>
+        </Container>
+    );
 }

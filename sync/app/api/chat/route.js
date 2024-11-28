@@ -1,5 +1,6 @@
 // /app/api/chat/route.js
 import { NextResponse } from "next/server";
+import { generateOneShots} from '@/lib/AImodels/oneshots';
 import FormData from "form-data";
 
 export async function POST(request) {
@@ -56,7 +57,7 @@ export async function POST(request) {
 
     const text = latestUserMessage.content;
 
-    const internalApiResponse = await callInternalApi(intent, text, audioFile);
+    const internalApiResponse = await callInternalFunction(intent, text, audioFile);
 
     if (internalApiResponse.success) {
         const gptMessage = `
@@ -93,73 +94,95 @@ export async function POST(request) {
 
 // 내부 API 호출 함수
 
-async function callInternalApi(intent, text, audioFile) {
-    try {
-        let apiEndpoint;
-        let formData = new FormData();
-        const baseURL = "http://localhost:3000"; // 내부 API 호출을 위한 기본 URL
-        // intent에 따라 다른 API 엔드포인트와 요청 데이터 설정
-        if (intent === "giveSerum") {
-            apiEndpoint = `${baseURL}/api/AImodels/giveserum`;
-            formData.append("text", text);
-        } else if (intent === "createMusic") {
-            apiEndpoint = `${baseURL}/api/AImodels/createmusic`;
-            formData.append("text", text);
-            if (audioFile) {
-                const arrayBuffer = await audioFile.arrayBuffer();
-                const buffer = Buffer.from(arrayBuffer);
-                formData.append("audioFile", buffer, {
-                    filename: audioFile.name,
-                    contentType: audioFile.type,
-                });
-            }
-        } else if (intent === "toneTransfer") {
-            apiEndpoint = `${baseURL}/api/AImodels/tonetransfer`;
-            formData.append("text", text);
-            if (!audioFile) {
-                return {
-                    success: false,
-                    error: "Audio file is required for toneTransfer.",
-                };
-            }
-            const arrayBuffer = await audioFile.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            formData.append("audioFile", buffer, {
-                filename: audioFile.name,
-                contentType: audioFile.type,
-            });
-        } else {
-            return { success: false, error: "Unknown intent." };
-        }
+// async function callInternalApi(intent, text, audioFile) {
+//     try {
+//         let apiEndpoint;
+//         let formData = new FormData();
+//         const baseURL = "http://localhost:3000"; // 내부 API 호출을 위한 기본 URL
+//         // intent에 따라 다른 API 엔드포인트와 요청 데이터 설정
+//         if (intent === "OneShots") {
+//             apiEndpoint = `${baseURL}/api/AImodels/oneshots`;
+//             formData.append("text", text);
+//         } else if (intent === "Loops") {
+//             apiEndpoint = `${baseURL}/api/AImodels/loops`;
+//             formData.append("text", text);
+//             if (audioFile) {
+//                 const arrayBuffer = await audioFile.arrayBuffer();
+//                 const buffer = Buffer.from(arrayBuffer);
+//                 formData.append("audioFile", buffer, {
+//                     filename: audioFile.name,
+//                     contentType: audioFile.type,
+//                 });
+//             }
+//         } else if (intent === "presets") {
+//             apiEndpoint = `${baseURL}/api/AImodels/presets`;
+//             formData.append("text", text);
+//             if (!audioFile) {
+//                 return {
+//                     success: false,
+//                     error: "Audio file is required for toneTransfer.",
+//                 };
+//             }
+//             const arrayBuffer = await audioFile.arrayBuffer();
+//             const buffer = Buffer.from(arrayBuffer);
+//             formData.append("audioFile", buffer, {
+//                 filename: audioFile.name,
+//                 contentType: audioFile.type,
+//             });
+//         } else {
+//             return { success: false, error: "Unknown intent." };
+//         }
 
-        // 내부 API 호출
-        const response = await fetch(apiEndpoint, {
-            method: "POST",
-            body: formData,
-            headers: formData.getHeaders(),
-            // 서버 측에서 상대 경로로 호출할 때 다음 옵션 추가
-            next: { revalidate: 0 },
-        });
+//         // 내부 API 호출
+//         const response = await fetch(apiEndpoint, {
+//             method: "POST",
+//             body: formData,
+//             headers: formData.getHeaders(),
+//             // 서버 측에서 상대 경로로 호출할 때 다음 옵션 추가
+//             next: { revalidate: 0 },
+//         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Internal API call failed:", errorText);
-            return { success: false };
-        }
+//         if (!response.ok) {
+//             const errorText = await response.text();
+//             console.error("Internal API call failed:", errorText);
+//             return { success: false };
+//         }
 
-        const data = await response.json();
+//         const data = await response.json();
 
-        if (data.success) {
-            return { success: true, data };
-        } else {
-            console.error("Internal API error:", data.error);
-            return { success: false };
-        }
-    } catch (error) {
-        console.error("Error calling internal API:", error);
-        return { success: false };
+//         if (data.success) {
+//             return { success: true, data };
+//         } else {
+//             console.error("Internal API error:", data.error);
+//             return { success: false };
+//         }
+//     } catch (error) {
+//         console.error("Error calling internal API:", error);
+//         return { success: false };
+//     }
+// }
+async function callInternalFunction(intent, text, audioFile) {
+  try {
+    let result;
+
+    // intent에 따라 다른 함수 호출
+    if (intent === "OneShots") {
+      result = await generateOneShots({ text, audioFile });
+    } else if (intent === "Loops") {
+      // result = await generateLoops({ text, audioFile });
+    } else if (intent === "Presets") {
+      // result = await generatePresets({ text, audioFile });
+    } else {
+      return { success: false, error: "Unknown intent." };
     }
+    console.log(result)
+    return {success: true, data: result};
+  } catch (error) {
+    console.error("Error in callInternalFunction:", error);
+    return { success: false };
+  }
 }
+
 
 async function generateGptResponse(messages, gptMessage) {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -224,14 +247,14 @@ async function detectIntent(userMessage, previousIntent) {
         {
             role: "system",
             content: `
-당신은 사용자 메시지를 분석하여 다음 세 가지 intent 중 하나를 반환하는 어시스턴트입니다: 1: 'toneTransfer', 2: 'createMusic', 3: 'giveSerum'.
-tonetransfer의 예시: "내가 올린 음악파일을 클라리넷 사운드로 바꾸고 싶어."
-createMusic의 예시: "kpop, lofi스타일의 음악을 만들어줘"
-giveSerum의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼으로만들고싶어."
+당신은 사용자 메시지를 분석하여 다음 세 가지 intent 중 하나를 반환하는 어시스턴트입니다: 1: 'OneShots', 2: 'Loops', 3: 'Presets'.
+1의 예시: "내가 올린 음악파일을 클라리넷 사운드로 바꾸고 싶어."
+2의 예시: "kpop, lofi스타일의 음악을 만들어줘"
+3의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼으로만들고싶어."
 - 사용자의 메시지가 intent를 변경하는 경우, 새로운 intent를 반환합니다.
 - 그렇지 않다면, 이전 intent를 반환합니다.
 - 오직 intent만 한 단어로 반환하고, 추가적인 텍스트는 포함하지 않습니다.
-- toneTransfer, createMusic, giveSerum 중 하나만을 반환하며, 다른 것은 반환하지 않습니다.
+- OneShots, Loops, Presets 중 하나만을 반환하며, 다른 것은 반환하지 않습니다.
 `.trim(),
         },
         {
@@ -269,19 +292,15 @@ giveSerum의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼
         const detectedIntent = data.choices[0].message.content.trim();
 
         // 의도한 세 가지 중 하나인지 확인
-        if (
-            ["toneTransfer", "createMusic", "giveSerum"].includes(
-                detectedIntent
-            )
-        ) {
+        if (["OneShots", "Loops", "Presets"].includes(detectedIntent)) {
             return detectedIntent;
         } else {
             // 모델이 예상치 못한 응답을 할 경우 이전 intent를 반환
-            return previousIntent || "toneTransfer"; // 기본값 설정 가능
+            return previousIntent || "Loops"; // 기본값 설정 가능
         }
     } catch (error) {
         console.error("Error detecting intent:", error);
         // 에러 발생 시 이전 intent 또는 기본 intent 반환
-        return previousIntent || "toneTransfer";
+        return previousIntent || "Loops";
     }
 }

@@ -2,9 +2,9 @@
 // components/ShowTables.jsx
 
 import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
-import CreateMusic from "./showTables/createMusic";
-import GiveSerum from "./showTables/GiveSerum";
-import ToneTransfer from "./showTables/ToneTransfer";
+import CreateOneShots from "./showTables/CreateOneShots";
+import CreateLoops from "./showTables/CreateLoops";
+import CreatePresets from "./showTables/CreatePresets";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
@@ -25,14 +25,14 @@ export default function ShowTables() {
     let ComponentToRender;
 
     switch (intent) {
-        case "createMusic":
-            ComponentToRender = CreateMusic;
+        case "OneShots":
+            ComponentToRender = CreateOneShots;
             break;
-        case "giveSerum":
-            ComponentToRender = GiveSerum;
+        case "Loops":
+            ComponentToRender = CreateLoops;
             break;
-        case "toneTransfer":
-            ComponentToRender = ToneTransfer;
+        case "Presets":
+            ComponentToRender =CreatePresets;
             break;
         default:
             ComponentToRender = null;

@@ -16,7 +16,7 @@ const ExportBtn = styled.button`
     font-size: 16px;
 `;
 
-export default function CreateMusic({ intent, content, audio }) {
+export default function CreateLoops({ intent, content, audio }) {
     return (
         <div>
             <h3>Create Music Component</h3>

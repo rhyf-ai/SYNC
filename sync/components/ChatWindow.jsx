@@ -52,9 +52,9 @@ export default function ChatWindow() {
     const setSelectedMessage = useSelectedMessageStore(
         (state) => state.setSelectedMessage
     );
-    const [intent, setIntent] = useState("CreateMusic");
+    const [intent, setIntent] = useState("OneShots");
     const [input, setInput] = useState("");
-    const intents = ["CreateMusic", "ToneTransfer", "GiveSerum"];
+    const intents = ["OneShots", "Loops", "Presets"];
 
     const [chatId, setChatId] = useState(null);
     const router = useRouter();
@@ -112,16 +112,16 @@ export default function ChatWindow() {
                 `}
                                 onClick={() => setIntent(item)}
                             >
-                                {item}
+                                {item === "OneShots" ? "one-shots" : item}
                             </button>
                         ))}
                     </div>
-                    <p className="text-3xl my-5 font-semibold">
-                        {intent === "ToneTransfer"
-                            ? "Please provide a description of the music you want to transfer the tone of."
-                            : intent === "CreateMusic"
-                            ? "Please provide a description of the music you want to create."
-                            : "Please provide a description of the music you want to give serum to."}
+                    <p className="text-3xl my-5 font-semibold" style={{fontFamily: "Pretendard"}}>
+                        {intent === "OneShots"
+                            ? "What one-shot sample do you want to generate?"
+                            : intent === "Loops"
+                            ? "What loop sample do you want to generate?"
+                            : "What serum preset do you want to generate?"}
                     </p>
                 </>
             )}

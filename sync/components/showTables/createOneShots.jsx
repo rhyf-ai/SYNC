@@ -54,7 +54,7 @@ const ExportBtn = styled.button`
     font-size: 16px;
 `;
 
-export default function ToneTransfer({ intent, content, audio }) {
+export default function CreateOneShots({ intent, content, audio }) {
     return (
         <div>
             <CustomDropdown />

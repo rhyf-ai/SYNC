@@ -1,5 +1,6 @@
 // /app/api/AImodels/giveserum.js
 import { NextResponse } from "next/server";
+import FormData from "form-data";
 
 export async function POST(request) {
     try {
@@ -27,7 +28,7 @@ export async function POST(request) {
 
         return NextResponse.json({ success: true, data });
     } catch (error) {
-        console.error("Error in giveserum API:", error);
+        console.error("Error in presets API:", error);
         return NextResponse.json({ success: false, error: error.message });
     }
 }

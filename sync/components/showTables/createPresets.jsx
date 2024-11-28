@@ -19,7 +19,7 @@ const ExportBtn = styled.button`
     font-size: 16px;
 `;
 
-export default function GiveSerum({ intent, content, data }) {
+export default function CreatePresets({ intent, content, data }) {
   const column = ['', 'Title', 'Style', 'File', 'Download'];
   
 

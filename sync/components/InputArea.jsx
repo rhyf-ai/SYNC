@@ -1,7 +1,7 @@
 // /components/InputArea.jsx
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
-
+import FormData from "form-data";
 const InputAreaContainer = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isMinimized",
 })`
@@ -207,11 +207,14 @@ export default function InputArea({
         // 메시지 목록 업데이트
         const updatedMessages = [...messages, userMessage];
 
+        let audioBase64 = null;
+
         const formData = new FormData();
         formData.append("messages", JSON.stringify(updatedMessages));
 
         if (selectedFile) {
             formData.append("audio", selectedFile);
+            //audioBase64 = await fileToBase64(selectedFile);
         } else if (recordedBlob) {
             formData.append("audio", recordedBlob, "recording.wav");
         }
