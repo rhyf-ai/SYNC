@@ -1,6 +1,7 @@
+"use client"; 
+
 // components/showTables/giveSerum.jsx
 import { useEffect, useState } from "react";
-import dummySerum from "../../app/data/dummySerum.json";
 import SelectFromTables from './SelectFromTables'
 import styled from "styled-components";
 
@@ -18,19 +19,9 @@ const ExportBtn = styled.button`
     font-size: 16px;
 `;
 
-export default function GiveSerum({ intent, content }) {
-  const [data, setData] = useState(null);
+export default function GiveSerum({ intent, content, data }) {
   const column = ['', 'Title', 'Style', 'File', 'Download'];
-    useEffect(() => {
-        setData(dummySerum);
-        console.log("dummySerum:", dummySerum);
-    }, []);
-
-    useEffect(() => {
-        if (data) {
-            console.log("data:", data);
-        }
-    }, [data]);
+  
 
     return (
         <div>

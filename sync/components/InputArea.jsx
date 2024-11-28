@@ -1,5 +1,6 @@
 // /components/InputArea.jsx
 import styled from "styled-components";
+import { useState, useEffect, useRef } from "react";
 
 const InputAreaContainer = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isMinimized",
@@ -67,12 +68,25 @@ const InputAreaContainer = styled.div.withConfig({
       `}
 `;
 
+const RecordButton = styled.button`
+    /* 필요한 스타일 추가 */
+    background: none;
+    border: none;
+    cursor: pointer;
+`;
+
+const InputFileButton = styled.button`
+    /* 필요한 스타일 추가 */
+    background: none;
+    border: none;
+    cursor: pointer;
+`;
+
 const SendButton = styled.button`
     transition: background 0.3s ease, box-shadow 0.3s ease;
     width: 50px;
     aspect-ratio: 1/1;
     border-radius: 50%;
-    //border: 2px solid rgba(255, 255, 255, 0);
     background: linear-gradient(136deg, #2600ff 15.04%, #8975f4 86.06%);
     box-shadow: 0px 10px 50px 0px rgba(8, 2, 45, 0.35);
     backdrop-filter: blur(50px);
@@ -85,35 +99,166 @@ const SendButton = styled.button`
         transform: translate(-50%, -50%);
         max-width: 50%;
     }
-    // &:hover {
-    //     background: linear-gradient(136deg, #8975f4 15.04%, #2600ff 86.06%);
-    // }
-`;
-
-const LoadingContainer = styled.div`
-    width: 100%;
-    border-radius: 30px;
-    background-color: #0f0332;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    color: white;
-    gap: 10px;
 `;
 
 export default function InputArea({
     input,
     setInput,
-    sendMessage,
     isMinimized,
+    intent,
+    addMessage,
+    messages,
+    setIsMinimized,
+    setSelectedMessage,
+    chatId,
+    setChatId,
+    setAudioSrc,
+    router,
 }) {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const inputFileRef = useRef(null);
+
+    const [recordedBlob, setRecordedBlob] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const mediaRecorderRef = useRef(null);
+
+    useEffect(() => {
+        // 오디오 객체 URL 생성
+        let url = null;
+        if (selectedFile) {
+            url = URL.createObjectURL(selectedFile);
+            setAudioSrc(url);
+        } else if (recordedBlob) {
+            url = URL.createObjectURL(recordedBlob);
+            setAudioSrc(url);
+        } else {
+            setAudioSrc(null);
+        }
+        return () => {
+            if (url) {
+                URL.revokeObjectURL(url);
+            }
+        };
+    }, [selectedFile, recordedBlob]);
+
+    // 파일이 선택되면 녹음된 오디오 제거
+    useEffect(() => {
+        if (selectedFile) {
+            setRecordedBlob(null);
+        }
+    }, [selectedFile]);
+
+    // 녹음이 완료되면 선택된 파일 제거
+    useEffect(() => {
+        if (recordedBlob) {
+            setSelectedFile(null);
+        }
+    }, [recordedBlob]);
+
+    const handleRecordClick = () => {
+        if (isRecording) {
+            // 녹음 중지
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        } else {
+            // 녹음 시작
+            navigator.mediaDevices
+                .getUserMedia({ audio: true })
+                .then((stream) => {
+                    mediaRecorderRef.current = new MediaRecorder(stream);
+                    mediaRecorderRef.current.start();
+
+                    const audiochunks = [];
+                    mediaRecorderRef.current.addEventListener(
+                        "dataavailable",
+                        (event) => {
+                            audiochunks.push(event.data);
+                        }
+                    );
+
+                    mediaRecorderRef.current.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audiochunks, {
+                            type: "audio/wav",
+                        });
+                        setRecordedBlob(audioBlob);
+                    });
+                    setIsRecording(true);
+                })
+                .catch((error) => {
+                    console.error("Error accessing microphone:", error);
+                    alert("Microphone access denied.");
+                });
+        }
+    };
+
+    const handleSendMessage = async () => {
+        if (!input.trim()) {
+            alert("Please enter some text.");
+            return;
+        }
+        const userMessage = {
+            role: "user",
+            content: input,
+            intent: isMinimized ? null : intent, // minimized되지 않았을 때만 intent 포함
+        };
+        addMessage(userMessage);
+        setInput("");
+
+        // 메시지 목록 업데이트
+        const updatedMessages = [...messages, userMessage];
+
+        const formData = new FormData();
+        formData.append("messages", JSON.stringify(updatedMessages));
+
+        if (selectedFile) {
+            formData.append("audio", selectedFile);
+        } else if (recordedBlob) {
+            formData.append("audio", recordedBlob, "recording.wav");
+        }
+
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.reply) {
+                const assistantMessage = {
+                    role: data.reply.role,
+                    content: data.reply.content,
+                    intent: data.reply.intent,
+                    audioUrl: data.audioUrl || null,
+                    fileUrl: data.fileUrl || null,
+                    json: data.giveSerumJson || null,
+                };
+                console.log("Assistant message:", assistantMessage);
+                addMessage(assistantMessage);
+                setSelectedMessage(assistantMessage);
+            } else if (data.error) {
+                console.error("Error from API:", data.error);
+            }
+
+            // 애니메이션을 위해 isMinimized 상태를 true로 변경
+            setIsMinimized(true);
+
+            // 애니메이션이 완료된 후 라우팅 (0.5초 후)
+            setTimeout(() => {
+                router.push(`/chat/${chatId}`, undefined, { shallow: true });
+            }, 500);
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    };
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter") {
             e.preventDefault(); // 기본 Enter 키 동작 방지
-            sendMessage();
+            handleSendMessage();
         }
     };
+
     return (
         <InputAreaContainer isMinimized={isMinimized}>
             <div
@@ -123,6 +268,7 @@ export default function InputArea({
                     backgroundColor: "#0F0332",
                     display: "flex",
                     padding: "0px 4px 0px 20px",
+                    alignItems: "center",
                 }}
             >
                 <input
@@ -137,9 +283,37 @@ export default function InputArea({
                             : "Add more Details"
                     }
                 />
+                <div className="flex gap-2 px-3">
+                    <RecordButton onClick={handleRecordClick}>
+                        {isRecording ? (
+                            <img
+                                src="/img/components/recordbtn_filled.svg"
+                                alt=""
+                            />
+                        ) : (
+                            <img src="/img/components/recordbtn.svg" alt="" />
+                        )}
+                    </RecordButton>
+                    <InputFileButton
+                        onClick={() => inputFileRef.current.click()}
+                    >
+                        <input
+                            type="file"
+                            accept="audio/*"
+                            ref={inputFileRef}
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                                if (e.target.files.length > 0)
+                                    setSelectedFile(e.target.files[0]);
+                            }}
+                        />
+                        <img src="/img/components/inputfilebtn.svg" alt="" />
+                    </InputFileButton>
+                </div>
+
                 <SendButton
                     className="flex justify-center items-center"
-                    onClick={sendMessage}
+                    onClick={handleSendMessage}
                 >
                     <img src="/img/components/Subtract.svg" alt="" />
                 </SendButton>

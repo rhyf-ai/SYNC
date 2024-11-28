@@ -20,7 +20,7 @@ export default function ShowTables() {
     );
 
 
-    const { content, intent, id, audioUrl } = selectedMessage;
+    const { content, intent, id, audioUrl, data } = selectedMessage;
 
     let ComponentToRender;
 
@@ -48,7 +48,7 @@ export default function ShowTables() {
                 </button>
             </div>
             {ComponentToRender && (
-                <ComponentToRender intent={intent} content={content} audio={audioUrl} />
+                <ComponentToRender intent={intent} content={content} data={data} audio={audioUrl} />
             )}
         </div>
     );
