@@ -1,24 +1,19 @@
 // components/ChatWindow.jsx
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import styled, { css } from "styled-components";
-import { useMessagesStore } from "../app/stores/messagesStore";
-import { useShowChatStore } from "../app/stores/showChatStore";
-import { useSelectedMessageStore } from "@/app/stores/selectedMessageStore";
-import {
-    Messages,
-    MessageContainer,
-    MessageBubble,
-    AssistantMessageBubble,
-} from "./MessageComponents";
-import InputToPrompt from "./chatWindow/inputToPrompt";
-import PlayMusicHome from "./showTables/PlayMusicHome";
-import InputArea from "./InputArea";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import styled, { css } from 'styled-components';
+import { useMessagesStore } from '../app/stores/messagesStore';
+import { useShowChatStore } from '../app/stores/showChatStore';
+import { useSelectedMessageStore } from '@/app/stores/selectedMessageStore';
+import { Messages, MessageContainer, MessageBubble, AssistantMessageBubble } from './MessageComponents';
+import InputToPrompt from './chatWindow/inputToPrompt';
+import PlayMusicHome from './showTables/PlayMusicHome';
+import InputArea from './InputArea';
+import { useRouter } from 'next/navigation';
 
 const Container = styled.div.withConfig({
-    shouldForwardProp: (prop) => prop !== "isMinimized",
+    shouldForwardProp: (prop) => prop !== 'isMinimized',
 })`
     display: flex;
     flex-direction: column;
@@ -49,15 +44,11 @@ export default function ChatWindow() {
     const isShow = useShowChatStore((state) => state.isShow);
     const isMinimized = useShowChatStore((state) => state.isMinimized);
     const setIsMinimized = useShowChatStore((state) => state.setIsMinimized);
-    const selectedMessage = useSelectedMessageStore(
-        (state) => state.selectedMessage
-    );
-    const setSelectedMessage = useSelectedMessageStore(
-        (state) => state.setSelectedMessage
-    );
-    const [intent, setIntent] = useState("OneShots");
-    const [input, setInput] = useState("");
-    const intents = ["OneShots", "Loops", "Presets"];
+    const selectedMessage = useSelectedMessageStore((state) => state.selectedMessage);
+    const setSelectedMessage = useSelectedMessageStore((state) => state.setSelectedMessage);
+    const [intent, setIntent] = useState('OneShots');
+    const [input, setInput] = useState('');
+    const intents = ['OneShots', 'Loops', 'Presets'];
 
     const [chatId, setChatId] = useState(null);
     const router = useRouter();
@@ -83,11 +74,11 @@ export default function ChatWindow() {
 
     return (
         <Container isMinimized={isMinimized}>
-            <div style={{ height: isMinimized ? "120px" : "180px" }}></div>
-            <Messages className={!isMinimized ? "hidden" : ""}>
+            <div style={{ height: isMinimized ? '120px' : '180px' }}></div>
+            <Messages className={!isMinimized ? 'hidden' : ''}>
                 {messages.map((msg, idx) => (
-                    <MessageContainer key={idx} isUser={msg.role === "user"}>
-                        {msg.role === "user" ? (
+                    <MessageContainer key={idx} isUser={msg.role === 'user'}>
+                        {msg.role === 'user' ? (
                             <MessageBubble isUser={true}>
                                 <p>{msg.content}</p>
                             </MessageBubble>
@@ -109,26 +100,23 @@ export default function ChatWindow() {
                             <button
                                 key={item}
                                 className={`px-7 py-2
-                  ${intent === item ? "text-white" : "text-white opacity-40"}
-                  ${index === 0 ? "rounded-l-xl" : ""}
-                  ${index === intents.length - 1 ? "rounded-r-xl" : ""}
+                  ${intent === item ? 'text-white' : 'text-white opacity-40'}
+                  ${index === 0 ? 'rounded-l-xl' : ''}
+                  ${index === intents.length - 1 ? 'rounded-r-xl' : ''}
                   bg-[rgba(255,255,255,0.1)]
                 `}
                                 onClick={() => setIntent(item)}
                             >
-                                {item === "OneShots" ? "one-shots" : item}
+                                {item === 'OneShots' ? 'One-shots' : item}
                             </button>
                         ))}
                     </div>
-                    <p
-                        className="text-3xl my-5 font-semibold text-white"
-                        style={{ fontFamily: "Pretendard" }}
-                    >
-                        {intent === "OneShots"
-                            ? "What one-shot sample do you want to generate?"
-                            : intent === "Loops"
-                            ? "What loop sample do you want to generate?"
-                            : "What serum preset do you want to generate?"}
+                    <p className="text-3xl my-5 font-semibold text-white" style={{ fontFamily: 'Pretendard' }}>
+                        {intent === 'OneShots'
+                            ? 'What one-shot sample do you want to generate?'
+                            : intent === 'Loops'
+                            ? 'What loop sample do you want to generate?'
+                            : 'What serum preset do you want to generate?'}
                     </p>
                 </>
             )}
@@ -149,11 +137,7 @@ export default function ChatWindow() {
             />
             {!isMinimized && (
                 <>
-                    <InputToPrompt
-                        intent={intent}
-                        input={input}
-                        setInput={setInput}
-                    />
+                    <InputToPrompt intent={intent} input={input} setInput={setInput} />
                 </>
             )}
             {!isMinimized && audioSrc && (
