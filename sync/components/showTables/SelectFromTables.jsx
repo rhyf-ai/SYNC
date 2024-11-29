@@ -167,7 +167,7 @@ export default function SelectFromTables({ intent, data }) {
                     </tbody>
                 </table>
             </div>
-            <div className="flex gap-4 mt-8 justify-end">
+            <div className="flex gap-4 mt-8 justify-end relative z-10">
                 <ExportBtn onClick={handleDownloadSelected}>
                     Download Selected
                 </ExportBtn>

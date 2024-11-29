@@ -10,15 +10,15 @@ export default function BodyContainer({ children }) {
         <div
             className={
                 isMinimized
-                    ? "styled-container-bg relative w-screen h-screen overflow-hidden"
-                    : "styled-container-bg flex justify-center items-center relative w-screen h-screen overflow-hidden"
+                    ? "styled-container-bg relative  overflow-hidden"
+                    : "styled-container-bg flex justify-center items-center relative  overflow-hidden"
             }
         >
             {/* 첫 번째 배경 */}
             <div
                 style={{
-                    width: "100vw",
-                    height: "100vh",
+                    width: "100%",
+                    height: "100%",
                     top: "0",
                     left: "0",
                     position: "absolute",
@@ -35,6 +35,7 @@ export default function BodyContainer({ children }) {
                     left: "59.01vw", // 1133px / 1920px * 100vw
                     top: "4.81vh", // 52px / 1080px * 100vh
                     position: "absolute",
+                    zIndex: "0",
                     background:
                         "radial-gradient(100% 100% at 50% 50%, rgba(0, 106, 255, 0.16) 0%, rgba(122, 98, 255, 0.16) 100%)",
                     borderRadius: "9999px",
@@ -51,6 +52,7 @@ export default function BodyContainer({ children }) {
                     left: "0",
                     top: "68.15vh", // 736px / 1080px * 100vh
                     position: "absolute",
+                    zIndex: "0",
                     background:
                         "radial-gradient(100% 100% at 50% 50%, rgba(0, 106, 255, 0.70) 0%, rgba(68, 38, 236, 0.70) 54%, rgba(165, 0, 255, 0) 100%)",
                     borderRadius: "9999px",
@@ -67,6 +69,7 @@ export default function BodyContainer({ children }) {
                     left: "27.71vw", // 532px / 1920px * 100vw
                     top: "42.59vh", // 460px / 1080px * 100vh
                     position: "absolute",
+                    zIndex: "0",
                     background:
                         "radial-gradient(100% 100% at 50% 50%, rgba(0, 106, 255, 0.20) 0%, rgba(122, 98, 255, 0.20) 100%)",
                     borderRadius: "9999px",

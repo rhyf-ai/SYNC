@@ -12,6 +12,8 @@ const Container = styled.div`
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(50px);
     margin-top: 57px;
+    max-width: 100%:
+
 `;
 const SelectInputButton = styled.button`
     border: none;
@@ -36,30 +38,28 @@ const Divider = styled.div`
     opacity: 0.1;
 `;
 
-export default function InputToPrompt({ input, setInput }) {
-    const createMusicInstrumentList = [
-        "Kicks",
-        "Vocals",
-        "Snare",
-        "808s",
-        "Hi-hat",
-        "Percussion",
-        "Piano",
-        "Strings",
-        "fx",
-    ];
+export default function InputToPrompt({ intent, input, setInput }) {
 
-    const createMusicGenresList = [
-        "Hiphop",
-        "Drum and Bass",
-        "Trap",
-        "R&B",
-        "POP",
-        "Tech House",
-        "EDM",
-        "Disco",
-        "Soul",
-    ];
+    const oneShotsInstrumentList = ["Kick", "Snare", "808","Clap", "Hi-hat","Percussion","Vocal","FX","Synth","Bass",];
+    const oneShotsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B","Pop","Rock","Jazz","House","Techno"];
+    const loopsInstrumentList = ["Drum Loop", "Bass Loop", "Vox Loop", "Synth Loop", "Guitar Loop", "Piano Loop","String Loop"];
+    const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&"];
+    const presetsInstrumentList = ["Bass Preset", "Lead Preset", "Pad Preset"];
+    const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R"];
+
+    let specificInstrumentList = [];
+    let specificGenreList = [];
+    if (intent === "OneShots") {
+        specificInstrumentList = oneShotsInstrumentList;
+        specificGenreList = oneShotsGenreList;
+    } else if (intent === "Loops") {
+        specificInstrumentList = loopsInstrumentList;
+        specificGenreList = loopsGenreList;
+    } else if (intent === "Presets") {
+        specificInstrumentList = presetsInstrumentList;
+        specificGenreList = presetsGenreList;
+    }
+
 
     const handleButtonClick = (instrument) => {
         const newInput = input + " " + instrument;
@@ -78,8 +78,8 @@ export default function InputToPrompt({ input, setInput }) {
                     <p className="font-semibold text-2xl">Instrument</p>
                 </div>
 
-                <div className="flex gap-3 py-5">
-                    {createMusicInstrumentList.map((instrument) => (
+                <div className="flex gap-3 py-5 flex-wrap">
+                    {specificInstrumentList.map((instrument) => (
                         <SelectInputButton
                             key={instrument}
                             onClick={() => handleButtonClick(instrument)}
@@ -101,7 +101,7 @@ export default function InputToPrompt({ input, setInput }) {
                 </div>
 
                 <div className="flex gap-3 py-5">
-                    {createMusicGenresList.map((genre) => (
+                    {specificGenreList.map((genre) => (
                         <SelectInputButton
                             key={genre}
                             onClick={() => handleButtonClick(genre)}
