@@ -1,22 +1,22 @@
 export async function generateOneShots({ text, audioFile }) {
     try {
-        console.log("Received text:", text);
+        console.log('Received text:', text);
         if (audioFile) {
-            console.log("Received audio file:", audioFile.name || "buffer");
+            console.log('Received audio file:', audioFile.name || 'buffer');
         } else {
-            console.log("No audio file received.");
+            console.log('No audio file received.');
         }
 
         // 더미 데이터 생성
         const results = [
-            { title: "OneShot Sample 1", audioUrl: "/samples/audio_sample1.mp3" },
-            { title: "OneShot Sample 2", audioUrl: "/samples/audio_sample2.wav" },
-            { title: "OneShot Sample 3", audioUrl: "/samples/audio_sample1.mp3" },
+            { title: 'Smooth', audioUrl: '/samples/kicksample.wav' },
+            { title: 'Intense', audioUrl: '/samples/kicksample.wav' },
+            { title: 'Chill', audioUrl: '/samples/kicksample.wav' },
         ];
 
         return { success: true, results };
     } catch (error) {
-        console.error("Error in generateOneShots function:", error);
+        console.error('Error in generateOneShots function:', error);
         return { success: false, error: error.message };
     }
 }
