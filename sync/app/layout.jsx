@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
             <body style={{ margin: 0, padding: 0 }}>
                 <BodyContainer>
                     <Header />
-                    <div className="hidden sm:flex">
+                    <div className="hidden sm:flex w-full">
                         <ChatWindow />
                         {children}
                     </div>

@@ -17,11 +17,12 @@ const Container = styled.div.withConfig({
 })`
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100%;
     position: relative;
     transition: all 0.5s ease;
     flex-shrink: 0;
-
+    padding-bottom: 20px;
     ${(props) =>
         props.isMinimized
             ? css`
@@ -74,8 +75,9 @@ export default function ChatWindow() {
 
     return (
         <Container isMinimized={isMinimized}>
-            <div style={{ height: isMinimized ? '120px' : '180px' }}></div>
-            <Messages className={!isMinimized ? 'hidden' : ''}>
+
+            <div style={{ height: isMinimized ? "120px" : "80px" }}></div>
+            <Messages className={!isMinimized ? "hidden" : ""}>
                 {messages.map((msg, idx) => (
                     <MessageContainer key={idx} isUser={msg.role === 'user'}>
                         {msg.role === 'user' ? (
@@ -95,7 +97,7 @@ export default function ChatWindow() {
             </Messages>
             {!isMinimized && (
                 <>
-                    <div className="flex justify-start mb-10 mt-12">
+                    <div className="flex justify-start mb-10 mt-12 w-4/5">
                         {intents.map((item, index) => (
                             <button
                                 key={item}
@@ -111,12 +113,17 @@ export default function ChatWindow() {
                             </button>
                         ))}
                     </div>
-                    <p className="text-3xl my-5 font-semibold text-white" style={{ fontFamily: 'Pretendard' }}>
-                        {intent === 'OneShots'
-                            ? 'What one-shot sample do you want to generate?'
-                            : intent === 'Loops'
-                            ? 'What loop sample do you want to generate?'
-                            : 'What serum preset do you want to generate?'}
+
+                    <p
+                        className="text-3xl my-5 font-semibold text-white w-4/5"
+                        style={{ fontFamily: "Pretendard" }}
+                    >
+                        {intent === "OneShots"
+                            ? "What one-shot sample do you want to generate?"
+                            : intent === "Loops"
+                            ? "What loop sample do you want to generate?"
+                            : "What serum preset do you want to generate?"}
+
                     </p>
                 </>
             )}
