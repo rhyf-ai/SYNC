@@ -121,7 +121,7 @@ export default function ChatWindow() {
                         ))}
                     </div>
                     <p
-                        className="text-3xl my-5 font-semibold"
+                        className="text-3xl my-5 font-semibold text-white"
                         style={{ fontFamily: "Pretendard" }}
                     >
                         {intent === "OneShots"

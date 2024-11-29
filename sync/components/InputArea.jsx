@@ -44,6 +44,7 @@ const InputAreaContainer = styled.div.withConfig({
         background-color: transparent;
         border: none;
         font-size: 18px;
+        color: white;
         flex: 1;
         &:focus {
             outline: none;

@@ -43,9 +43,9 @@ export default function InputToPrompt({ intent, input, setInput }) {
     const oneShotsInstrumentList = ["Kick", "Snare", "808","Clap", "Hi-hat","Percussion","Vocal","FX","Synth","Bass",];
     const oneShotsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B","Pop","Rock","Jazz","House","Techno"];
     const loopsInstrumentList = ["Drum Loop", "Bass Loop", "Vox Loop", "Synth Loop", "Guitar Loop", "Piano Loop","String Loop"];
-    const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&"];
+    const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
     const presetsInstrumentList = ["Bass Preset", "Lead Preset", "Pad Preset"];
-    const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R"];
+    const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
 
     let specificInstrumentList = [];
     let specificGenreList = [];
@@ -75,7 +75,7 @@ export default function InputToPrompt({ intent, input, setInput }) {
                         src="/img/components/instrument.svg"
                         alt=""
                     />
-                    <p className="font-semibold text-2xl">Instrument</p>
+                    <p className="font-semibold text-2xl text-white">Instrument</p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
@@ -97,7 +97,7 @@ export default function InputToPrompt({ intent, input, setInput }) {
                         src="/img/components/genre.svg"
                         alt=""
                     />
-                    <p className="font-semibold text-2xl">Genre</p>
+                    <p className="font-semibold text-2xl text-white">Genre</p>
                 </div>
 
                 <div className="flex gap-3 py-5">

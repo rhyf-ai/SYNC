@@ -23,11 +23,11 @@ const Header = () => {
                 <img className="ml-[3vw] mt-[1.5vh]" src="/img/logo/Rhyf_logo.svg" alt="" style={{ height: '4vh' }} />
             </a>
             <div className="self-end flex gap-20 text-l font-semibold mt-[2vh] text-white">
-                <a href="/" className="relative ">
+                <a href="/" className="relative text-white">
                     Create
                     <NavBorder />
                 </a>
-                <a href="/" className="relative ">
+                <a href="/" className="relative text-white">
                     History
                 </a>
             </div>
