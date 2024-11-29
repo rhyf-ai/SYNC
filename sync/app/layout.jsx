@@ -23,9 +23,9 @@ export default function RootLayout({ children }) {
                         {children}
                     </div>
                     <div className="sm:hidden flex flex-col items-center absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/4 z-20">
-                        <img className="mb-10" style={{width: '35vw'}} src="/img/logo/only_rhyf.svg" alt="" />
-                        <div className="mobile-line" style={{fontFamily: 'Pretendard', fontSize: '12vw', fontWeight: '700'}}>
-                            <h2 className="mobile-lineup">Rhyf AI</h2>
+                        <img className="mb-10" style={{width: '20vw'}} src="/img/logo/only_rhyf.svg" alt="" />
+                        <div className="mobile-line border-none" style={{fontFamily: 'Pretendard', fontSize: '8vw', fontWeight: '700'}}>
+                            <h2 className="mobile-lineup border-none text-white">Rhyf AI</h2>
                         </div>
                     </div>
                 </BodyContainer>
