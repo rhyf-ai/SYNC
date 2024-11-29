@@ -49,6 +49,9 @@ export default function ChatWindow() {
     const isShow = useShowChatStore((state) => state.isShow);
     const isMinimized = useShowChatStore((state) => state.isMinimized);
     const setIsMinimized = useShowChatStore((state) => state.setIsMinimized);
+    const selectedMessage = useSelectedMessageStore(
+        (state) => state.selectedMessage
+    );
     const setSelectedMessage = useSelectedMessageStore(
         (state) => state.setSelectedMessage
     );
@@ -93,6 +96,7 @@ export default function ChatWindow() {
                                 message={msg}
                                 id={idx}
                                 onArrowClick={handleArrowClick}
+                                isSelected={msg === selectedMessage}
                             />
                         )}
                     </MessageContainer>

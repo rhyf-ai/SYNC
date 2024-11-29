@@ -228,13 +228,15 @@ export default function InputArea({
             const data = await response.json();
 
             if (data.reply) {
+                console.log(data)
                 const assistantMessage = {
                     role: data.reply.role,
                     content: data.reply.content,
                     intent: data.reply.intent,
-                    audioUrl: data.audioUrl || null,
-                    fileUrl: data.fileUrl || null,
-                    json: data.giveSerumJson || null,
+                    data: data.data || null,
+                    // audioUrl: data.audioUrl || null,
+                    // fileUrl: data.fileUrl || null,
+                    // json: data.giveSerumJson || null,
                 };
                 console.log("Assistant message:", assistantMessage);
                 addMessage(assistantMessage);

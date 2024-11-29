@@ -20,18 +20,12 @@ const ExportBtn = styled.button`
 `;
 
 export default function CreatePresets({ intent, content, data }) {
-  const column = ['', 'Title', 'Style', 'File', 'Download'];
+  const column = ['Option', 'Title', 'Description', 'Download'];
   
 
     return (
         <div>
-            <h3>Give Serum Component</h3>
-            <p>Intent: {intent}</p>
-            <p>Content: {content}</p>
-            <SelectFromTables column={column} data={data} />
-            <div className="flex justify-end gap-4 mt-5">
-                <ExportBtn>Export as FXP</ExportBtn>
-            </div>
+            <SelectFromTables intent={intent} data={data} />
         </div>
     );
 }

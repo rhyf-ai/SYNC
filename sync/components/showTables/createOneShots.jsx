@@ -61,7 +61,7 @@ export default function CreateOneShots({ intent, content, audio }) {
             <div className="h-60 w-full rounded-2xl bg-gray-300 my-6">
                 add Something
             </div>
-            <PlayMusic audio={audio} />
+            <SelectFromTables column={column} data={data} />
             <div className="flex justify-end gap-4 mt-5">
                 <ExportBtn>Export as WAV</ExportBtn>
                 <ExportBtn>Export as MIDI</ExportBtn>

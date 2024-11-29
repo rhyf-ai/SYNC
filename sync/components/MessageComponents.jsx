@@ -78,17 +78,21 @@ const ArrowButton = styled.button`
     font-size: 20px;
     aspect-ratio: 1/1;
     color: #fff;
-    background-color: #000;
+    ${(props) =>
+        props.isSelected
+            ? `background-color: #2600FF;`
+            : `background-color: #000;`}
+
     border-radius: 50%;
 `;
 
-export function AssistantMessageBubble({ message, id, onArrowClick }) {
+export function AssistantMessageBubble({ message, id, onArrowClick, isSelected }) {
     return (
         <BubbleContainer>
             <ResponseText>{message.content}</ResponseText>
             <p>{message.intent}</p>
             <div className="flex justify-end">
-                <ArrowButton onClick={() => onArrowClick(message)}>
+                <ArrowButton isSelected={isSelected} onClick={() => onArrowClick(message)}>
                     <FontAwesomeIcon icon={faArrowRight} />
                 </ArrowButton>
             </div>

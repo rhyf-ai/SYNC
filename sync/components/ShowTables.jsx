@@ -8,6 +8,7 @@ import CreatePresets from "./showTables/CreatePresets";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import SelectFromTables from "./showTables/SelectFromTables";
 
 
 export default function ShowTables() {
@@ -20,23 +21,7 @@ export default function ShowTables() {
     );
 
 
-    const { content, intent, id, audioUrl, data } = selectedMessage;
-
-    let ComponentToRender;
-
-    switch (intent) {
-        case "OneShots":
-            ComponentToRender = CreateOneShots;
-            break;
-        case "Loops":
-            ComponentToRender = CreateLoops;
-            break;
-        case "Presets":
-            ComponentToRender =CreatePresets;
-            break;
-        default:
-            ComponentToRender = null;
-    }
+    const { intent, data } = selectedMessage;
 
     return (
         <div className="p-10 pr-20">
@@ -47,9 +32,7 @@ export default function ShowTables() {
                     <FontAwesomeIcon icon={faBars} style={{fontSize: '24px'}} />
                 </button>
             </div>
-            {ComponentToRender && (
-                <ComponentToRender intent={intent} content={content} data={data} audio={audioUrl} />
-            )}
+            <SelectFromTables intent={intent} data={data} />
         </div>
     );
 }

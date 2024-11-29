@@ -1,5 +1,3 @@
-// /lib/AImodels/oneshots.js
-
 export async function generateOneShots({ text, audioFile }) {
     try {
         console.log("Received text:", text);
@@ -10,12 +8,13 @@ export async function generateOneShots({ text, audioFile }) {
         }
 
         // 더미 데이터 생성
-        const audioUrl = [
-            "/samples/audio/track1.mp3",
-            "/samples/audio/track2.mp3",
+        const results = [
+            { title: "OneShot Sample 1", audioUrl: "/samples/audio_sample1.mp3" },
+            { title: "OneShot Sample 2", audioUrl: "/samples/audio_sample2.mp3" },
+            { title: "OneShot Sample 3", audioUrl: "/samples/audio_sample1.mp3" },
         ];
 
-        return { success: true, audioUrl };
+        return { success: true, results };
     } catch (error) {
         console.error("Error in generateOneShots function:", error);
         return { success: false, error: error.message };

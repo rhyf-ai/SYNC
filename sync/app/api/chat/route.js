@@ -1,7 +1,8 @@
 // /app/api/chat/route.js
 import { NextResponse } from "next/server";
 import { generateOneShots} from '@/lib/AImodels/oneshots';
-import FormData from "form-data";
+import { generateLoops } from '@/lib/AImodels/loops';
+import { generatePresets } from '@/lib/AImodels/presets';
 
 export async function POST(request) {
     const formData = await request.formData();
@@ -58,7 +59,7 @@ export async function POST(request) {
     const text = latestUserMessage.content;
 
     const internalApiResponse = await callInternalFunction(intent, text, audioFile);
-
+    console.log('internalApiResponse:',internalApiResponse)
     if (internalApiResponse.success) {
         const gptMessage = `
       내가 보낸 프롬프트: ${text}
@@ -76,7 +77,7 @@ export async function POST(request) {
         return NextResponse.json({
             reply: assistantMessage,
             intent: intent,
-            ...internalApiResponse.data, // 필요한 데이터 추가
+            data: internalApiResponse.data.results, // 필요한 데이터 추가
         });
     } else {
         // 실패한 경우 처리
@@ -169,13 +170,13 @@ async function callInternalFunction(intent, text, audioFile) {
     if (intent === "OneShots") {
       result = await generateOneShots({ text, audioFile });
     } else if (intent === "Loops") {
-      // result = await generateLoops({ text, audioFile });
+      result = await generateLoops({ text, audioFile });
     } else if (intent === "Presets") {
-      // result = await generatePresets({ text, audioFile });
+      result = await generatePresets({ text, audioFile });
     } else {
       return { success: false, error: "Unknown intent." };
     }
-    console.log(result)
+    console.log('result:',result)
     return {success: true, data: result};
   } catch (error) {
     console.error("Error in callInternalFunction:", error);
