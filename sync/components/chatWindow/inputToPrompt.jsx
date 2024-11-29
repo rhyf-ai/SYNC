@@ -40,10 +40,37 @@ const Divider = styled.div`
 `;
 
 export default function InputToPrompt({ intent, input, setInput }) {
-
-    const oneShotsInstrumentList = ["Kick", "Snare", "808","Clap", "Hi-hat","Percussion","Vocal","FX","Synth","Bass",];
-    const oneShotsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B","Pop","Rock","Jazz","House","Techno"];
-    const loopsInstrumentList = ["Drum Loop", "Bass Loop", "Vox Loop", "Synth Loop", "Guitar Loop", "Piano Loop","String Loop"];
+    const oneShotsInstrumentList = [
+        "Kick",
+        "Snare",
+        "808",
+        "Clap",
+        "Hi-hat",
+        "Percussion",
+        "Vocal",
+        "FX",
+        "Bass",
+    ];
+    const oneShotsGenreList = [
+        "Hiphop",
+        "Drum and Bass",
+        "Trap",
+        "R&B",
+        "Pop",
+        "Rock",
+        "Jazz",
+        "House",
+        "Techno",
+    ];
+    const loopsInstrumentList = [
+        "Drum Loop",
+        "Bass Loop",
+        "Vox Loop",
+        "Synth Loop",
+        "Guitar Loop",
+        "Piano Loop",
+        "String Loop",
+    ];
     const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
     const presetsInstrumentList = ["Bass Preset", "Lead Preset", "Pad Preset"];
     const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
@@ -61,7 +88,6 @@ export default function InputToPrompt({ intent, input, setInput }) {
         specificGenreList = presetsGenreList;
     }
 
-
     const handleButtonClick = (instrument) => {
         const newInput = input + " " + instrument;
         setInput(newInput);
@@ -76,7 +102,9 @@ export default function InputToPrompt({ intent, input, setInput }) {
                         src="/img/components/instrument.svg"
                         alt=""
                     />
-                    <p className="font-semibold text-2xl text-white">Instrument</p>
+                    <p className="font-semibold text-2xl text-white">
+                        Instrument
+                    </p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
