@@ -40,18 +40,7 @@ const Divider = styled.div`
 `;
 
 export default function InputToPrompt({ intent, input, setInput }) {
-    const oneShotsInstrumentList = [
-        'Kick',
-        'Snare',
-        '808',
-        'Clap',
-        'Hi-hat',
-        'Percussion',
-        'Vocal',
-        'FX',
-        'Synth',
-        'Bass',
-    ];
+    const oneShotsInstrumentList = ['Kick', 'Snare', '808', 'Clap', 'Hi-hat', 'Percussion', 'Vocal', 'FX', 'Bass'];
     const oneShotsGenreList = ['Hiphop', 'Drum and Bass', 'Trap', 'R&B', 'Pop', 'Rock', 'Jazz', 'House', 'Techno'];
     const loopsInstrumentList = [
         'Drum Loop',
