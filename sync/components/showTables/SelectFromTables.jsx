@@ -98,7 +98,7 @@ export default function SelectFromTables({ intent, data }) {
     const getSelectedFilePaths = () => {
         return tableData
             .filter((_, index) => checkedItems[index])
-            .map((item) => item.file_path);
+            .map((item) => item.audioUrl);
     };
     const handleDownloadSelected = () => {
         const selectedFilePaths = getSelectedFilePaths();
@@ -108,7 +108,7 @@ export default function SelectFromTables({ intent, data }) {
     };
     const handleDownloadAll = () => {
         tableData.forEach((item) => {
-            handleDownload(item.file_path);
+            handleDownload(item.audioUrl);
         });
     };
     // intent에 따라 컬럼 설정
@@ -162,7 +162,7 @@ export default function SelectFromTables({ intent, data }) {
                                 <td>
                                     <DownloadButton
                                         onClick={() =>
-                                            handleDownload(item.file_path)
+                                            handleDownload(item.audioUrl)
                                         }
                                     >
                                         <FontAwesomeIcon icon={faDownload} />
