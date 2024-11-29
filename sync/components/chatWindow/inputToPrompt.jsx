@@ -1,6 +1,6 @@
-import { div } from "framer-motion/client";
-import { useState } from "react";
-import styled from "styled-components";
+import { div } from 'framer-motion/client';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
     display: flex;
@@ -77,19 +77,19 @@ export default function InputToPrompt({ intent, input, setInput }) {
 
     let specificInstrumentList = [];
     let specificGenreList = [];
-    if (intent === "OneShots") {
+    if (intent === 'OneShots') {
         specificInstrumentList = oneShotsInstrumentList;
         specificGenreList = oneShotsGenreList;
-    } else if (intent === "Loops") {
+    } else if (intent === 'Loops') {
         specificInstrumentList = loopsInstrumentList;
         specificGenreList = loopsGenreList;
-    } else if (intent === "Presets") {
+    } else if (intent === 'Presets') {
         specificInstrumentList = presetsInstrumentList;
         specificGenreList = presetsGenreList;
     }
 
     const handleButtonClick = (instrument) => {
-        const newInput = input + " " + instrument;
+        const newInput = input + ' ' + instrument;
         setInput(newInput);
     };
 
@@ -109,10 +109,7 @@ export default function InputToPrompt({ intent, input, setInput }) {
 
                 <div className="flex gap-3 py-5 flex-wrap">
                     {specificInstrumentList.map((instrument) => (
-                        <SelectInputButton
-                            key={instrument}
-                            onClick={() => handleButtonClick(instrument)}
-                        >
+                        <SelectInputButton key={instrument} onClick={() => handleButtonClick(instrument)}>
                             {instrument}
                         </SelectInputButton>
                     ))}
@@ -121,20 +118,13 @@ export default function InputToPrompt({ intent, input, setInput }) {
             <Divider />
             <div className="p-3">
                 <div className="flex gap-2">
-                    <img
-                        style={{ width: "30px" }}
-                        src="/img/components/genre.svg"
-                        alt=""
-                    />
+                    <img style={{ width: '30px' }} src="/img/components/genre.svg" alt="" />
                     <p className="font-semibold text-2xl text-white">Genre</p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
                     {specificGenreList.map((genre) => (
-                        <SelectInputButton
-                            key={genre}
-                            onClick={() => handleButtonClick(genre)}
-                        >
+                        <SelectInputButton key={genre} onClick={() => handleButtonClick(genre)}>
                             {genre}
                         </SelectInputButton>
                     ))}
