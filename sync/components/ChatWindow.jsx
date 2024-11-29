@@ -12,8 +12,8 @@ import {
     MessageBubble,
     AssistantMessageBubble,
 } from "./MessageComponents";
-import InputToPrompt from './chatWindow/inputToPrompt'
-import PlayMusic from "./showTables/PlayMusic";
+import InputToPrompt from "./chatWindow/inputToPrompt";
+import PlayMusicHome from "./showTables/PlayMusicHome";
 import InputArea from "./InputArea";
 import { useRouter } from "next/navigation";
 
@@ -83,7 +83,7 @@ export default function ChatWindow() {
 
     return (
         <Container isMinimized={isMinimized}>
-            <div style={{ height: isMinimized ? '120px' : '180px' }}></div>
+            <div style={{ height: isMinimized ? "120px" : "180px" }}></div>
             <Messages className={!isMinimized ? "hidden" : ""}>
                 {messages.map((msg, idx) => (
                     <MessageContainer key={idx} isUser={msg.role === "user"}>
@@ -120,7 +120,10 @@ export default function ChatWindow() {
                             </button>
                         ))}
                     </div>
-                    <p className="text-3xl my-5 font-semibold" style={{fontFamily: "Pretendard"}}>
+                    <p
+                        className="text-3xl my-5 font-semibold"
+                        style={{ fontFamily: "Pretendard" }}
+                    >
                         {intent === "OneShots"
                             ? "What one-shot sample do you want to generate?"
                             : intent === "Loops"
@@ -146,12 +149,16 @@ export default function ChatWindow() {
             />
             {!isMinimized && (
                 <>
-                    <InputToPrompt intent={intent} input={input} setInput={setInput} />
+                    <InputToPrompt
+                        intent={intent}
+                        input={input}
+                        setInput={setInput}
+                    />
                 </>
             )}
             {!isMinimized && audioSrc && (
                 <div className="flex justify-center items-center gap-6 mt-10">
-                    <PlayMusic audio={audioSrc} />
+                    <PlayMusicHome audio={audioSrc} />
                 </div>
             )}
         </Container>

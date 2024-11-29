@@ -2,9 +2,6 @@
 // components/ShowTables.jsx
 
 import { useSelectedMessageStore } from "../app/stores/selectedMessageStore";
-import CreateOneShots from "./showTables/CreateOneShots";
-import CreateLoops from "./showTables/CreateLoops";
-import CreatePresets from "./showTables/CreatePresets";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";

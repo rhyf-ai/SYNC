@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import dummydata from "../../app/data/dummySerum.json";
-import PlayMusic from "./PlayMusic";
+import PlayMusicTable from "./PlayMusicTable";
 import { useState } from "react";
 
 const CheckboxContainer = styled.div`
@@ -15,7 +15,8 @@ const CheckboxContainer = styled.div`
     border-radius: 4px;
     opacity: ${(props) => (props.checked ? "1" : "0.05")};
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    // transition: all 0.2s ease-in-out;
+    margin: 20px 0px;
 
     svg {
         display: ${(props) => (props.checked ? "block" : "none")};
@@ -35,7 +36,7 @@ const DownloadButton = styled.button`
     background: none;
     border: none;
     cursor: pointer;
-    color: #5436ff; /* 아이콘 색상 */
+    color: #fff; /* 아이콘 색상 */
     font-size: 1.2em;
 
     &:hover {
@@ -43,26 +44,17 @@ const DownloadButton = styled.button`
     }
 `;
 
-const TR = styled.tr`
-    padding: 29px 7px;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
-    border-opacity: 0.1;
-    & td {
-    }
-`;
-
 const ExportBtn = styled.button`
     border: none;
-    background-color: white;
+    background-color: #f0f0f0;
     color: #5436ff;
-    border-radius: 100px;
-    padding: 14px 48px;
+    border-radius: 60px;
+    padding: 8px 30px;
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
 `;
 
@@ -93,7 +85,6 @@ export default function SelectFromTables({ intent, data }) {
         link.click();
         document.body.removeChild(link);
     };
-
 
     const getSelectedFilePaths = () => {
         return tableData
@@ -126,11 +117,7 @@ export default function SelectFromTables({ intent, data }) {
                     <thead className="text-xs bg-transparent opacity-20 border-y border-white border-opacity-10 ">
                         <tr>
                             {columns.map((col, index) => (
-                                <th
-                                    scope="col"
-                                    className="px-6 py-3 "
-                                    key={index}
-                                >
+                                <th scope="col" className="py-3 " key={index}>
                                     {col}
                                 </th>
                             ))}
@@ -138,7 +125,14 @@ export default function SelectFromTables({ intent, data }) {
                     </thead>
                     <tbody className="bg-transparent border-y border-white border-opacity-10">
                         {tableData.map((item, index) => (
-                            <TR key={index}>
+                            <tr
+                                className={
+                                    checkedItems[index] === 1
+                                        ? "border-y border-white border-opacity-10 rounded-xl bg-[rgba(240,240,240,0.05)]"
+                                        : "border-y border-white border-opacity-10 rounded-xl bg-transparent"
+                                }
+                                key={index}
+                            >
                                 {/* 첫 번째 열: 체크박스 */}
                                 <td>
                                     <Checkbox
@@ -155,11 +149,11 @@ export default function SelectFromTables({ intent, data }) {
                                     <td>{item.description}</td>
                                 ) : (
                                     <td>
-                                        <PlayMusic audio={item.audioUrl} />
+                                        <PlayMusicTable audio={item.audioUrl} />
                                     </td>
                                 )}
                                 {/* 네 번째 열: 다운로드 버튼 */}
-                                <td>
+                                <td className="text-center">
                                     <DownloadButton
                                         onClick={() =>
                                             handleDownload(item.audioUrl)
@@ -168,12 +162,12 @@ export default function SelectFromTables({ intent, data }) {
                                         <FontAwesomeIcon icon={faDownload} />
                                     </DownloadButton>
                                 </td>
-                            </TR>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            <div className="flex gap-4 mt-5">
+            <div className="flex gap-4 mt-8 justify-end">
                 <ExportBtn onClick={handleDownloadSelected}>
                     Download Selected
                 </ExportBtn>

@@ -102,7 +102,7 @@ const TimeDisplay = styled.span`
     text-align: center;
 `;
 
-export default function PlayMusic({ audio }) {
+export default function PlayMusicHome({ audio }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [audioTime, setAudioTime] = useState(0);
     const [audioPercentage, setAudioPercentage] = useState(0);

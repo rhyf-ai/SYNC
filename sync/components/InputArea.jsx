@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import FormData from "form-data";
+
 const InputAreaContainer = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isMinimized",
 })`

@@ -90,7 +90,6 @@ export function AssistantMessageBubble({ message, id, onArrowClick, isSelected }
     return (
         <BubbleContainer>
             <ResponseText>{message.content}</ResponseText>
-            <p>{message.intent}</p>
             <div className="flex justify-end">
                 <ArrowButton isSelected={isSelected} onClick={() => onArrowClick(message)}>
                     <FontAwesomeIcon icon={faArrowRight} />
