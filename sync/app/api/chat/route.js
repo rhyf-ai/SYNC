@@ -1,32 +1,29 @@
 // /app/api/chat/route.js
-import { NextResponse } from "next/server";
-import { generateOneShots} from '@/lib/AImodels/oneshots';
+import { NextResponse } from 'next/server';
+import { generateOneShots } from '@/lib/AImodels/oneshots';
 import { generateLoops } from '@/lib/AImodels/loops';
 import { generatePresets } from '@/lib/AImodels/presets';
 
 export async function POST(request) {
     const formData = await request.formData();
 
-    const messagesJson = formData.get("messages");
+    const messagesJson = formData.get('messages');
     const messages = JSON.parse(messagesJson);
 
-    const audioFile = formData.get("audio"); // 오디오 파일
+    const audioFile = formData.get('audio'); // 오디오 파일
 
     if (audioFile) {
-        console.log("audioFile:", {
+        console.log('audioFile:', {
             name: audioFile.name,
             size: audioFile.size,
             type: audioFile.type,
         });
     } else {
-        console.log("No audio file received.");
+        console.log('No audio file received.');
     }
 
     if (!messages || !Array.isArray(messages)) {
-        return NextResponse.json(
-            { error: "Invalid messages format" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid messages format' }, { status: 400 });
     }
 
     let previousIntent = null;
@@ -38,11 +35,8 @@ export async function POST(request) {
     }
 
     const latestUserMessage = messages[messages.length - 1];
-    if (!latestUserMessage || latestUserMessage.role !== "user") {
-        return NextResponse.json(
-            { error: "No user message found" },
-            { status: 400 }
-        );
+    if (!latestUserMessage || latestUserMessage.role !== 'user') {
+        return NextResponse.json({ error: 'No user message found' }, { status: 400 });
     }
 
     let intent = null;
@@ -53,25 +47,21 @@ export async function POST(request) {
         // intent를 감지합니다.
         intent = await detectIntent(latestUserMessage.content, previousIntent);
     }
-    console.log("Detected intent:", intent);
+    console.log('Detected intent:', intent);
     latestUserMessage.intent = intent;
 
     const text = latestUserMessage.content;
 
     const internalApiResponse = await callInternalFunction(intent, text, audioFile);
-    console.log('internalApiResponse:',internalApiResponse)
+    console.log('internalApiResponse:', internalApiResponse);
     if (internalApiResponse.success) {
         const gptMessage = `
-      내가 보낸 프롬프트: ${text}
-      받은 결과: 성공
-      따라서 성공적으로 결과가 생성되었다는 내용으로 내가 보낸 프롬프트의 문맥을 파악해서 한 문장으로 답변을 생성해서 보내줘. 이때 언어는 사용자가 사용한 언어와 동일한 언어로 답변을 보내줘.
-    `;
+        The given prompt: ${text}
+Result: Success
+Based on this, analyze the context of the prompt I provided and generate a single sentence summarizing that the result was successfully generated. The response should always be in English or Korean`;
 
         // GPT에게 응답을 생성하도록 요청합니다.
-        const assistantMessage = await generateGptResponse(
-            messages,
-            gptMessage
-        );
+        const assistantMessage = await generateGptResponse(messages, gptMessage);
 
         // 결과를 반환합니다.
         return NextResponse.json({
@@ -84,10 +74,7 @@ export async function POST(request) {
         const errorMessage = `죄송합니다. 요청하신 작업을 수행하는 데 오류가 발생했습니다. 다시 시도해 주세요.`;
 
         // GPT에게 에러 메시지를 생성하도록 요청합니다.
-        const assistantMessage = await generateGptResponse(
-            messages,
-            errorMessage
-        );
+        const assistantMessage = await generateGptResponse(messages, errorMessage);
 
         return NextResponse.json({ reply: assistantMessage }, { status: 500 });
     }
@@ -163,47 +150,43 @@ export async function POST(request) {
 //     }
 // }
 async function callInternalFunction(intent, text, audioFile) {
-  try {
-    let result;
+    try {
+        let result;
 
-    // intent에 따라 다른 함수 호출
-    if (intent === "OneShots") {
-      result = await generateOneShots({ text, audioFile });
-    } else if (intent === "Loops") {
-      result = await generateLoops({ text, audioFile });
-    } else if (intent === "Presets") {
-      result = await generatePresets({ text, audioFile });
-    } else {
-      return { success: false, error: "Unknown intent." };
+        // intent에 따라 다른 함수 호출
+        if (intent === 'OneShots') {
+            result = await generateOneShots({ text, audioFile });
+        } else if (intent === 'Loops') {
+            result = await generateLoops({ text, audioFile });
+        } else if (intent === 'Presets') {
+            result = await generatePresets({ text, audioFile });
+        } else {
+            return { success: false, error: 'Unknown intent.' };
+        }
+        console.log('result:', result);
+        return { success: true, data: result };
+    } catch (error) {
+        console.error('Error in callInternalFunction:', error);
+        return { success: false };
     }
-    console.log('result:',result)
-    return {success: true, data: result};
-  } catch (error) {
-    console.error("Error in callInternalFunction:", error);
-    return { success: false };
-  }
 }
-
 
 async function generateGptResponse(messages, gptMessage) {
     const apiKey = process.env.OPENAI_API_KEY;
-    const url = "https://api.openai.com/v1/chat/completions";
+    const url = 'https://api.openai.com/v1/chat/completions';
 
     // 기존 메시지에 GPT 메시지를 추가
-    const updatedMessages = [
-        ...messages,
-        { role: "user", content: gptMessage },
-    ];
+    const updatedMessages = [...messages, { role: 'user', content: gptMessage }];
 
     try {
         const response = await fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
+                model: 'gpt-4o-mini',
                 messages: updatedMessages,
                 temperature: 0.7,
             }),
@@ -211,18 +194,13 @@ async function generateGptResponse(messages, gptMessage) {
 
         if (!response.ok) {
             const error = await response.json();
-            console.error("Failed to fetch ChatGPT response:", error);
+            console.error('Failed to fetch ChatGPT response:', error);
             throw new Error(error.error.message);
         }
 
         const data = await response.json();
 
-        if (
-            data.choices &&
-            data.choices[0] &&
-            data.choices[0].message &&
-            data.choices[0].message.content
-        ) {
+        if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
             const assistantMessage = {
                 role: data.choices[0].message.role,
                 content: data.choices[0].message.content,
@@ -230,38 +208,47 @@ async function generateGptResponse(messages, gptMessage) {
             };
             return assistantMessage;
         } else {
-            console.error("Unexpected response structure:", data);
-            throw new Error("Unexpected response structure");
+            console.error('Unexpected response structure:', data);
+            throw new Error('Unexpected response structure');
         }
     } catch (error) {
-        console.error("Error fetching ChatGPT response:", error);
-        throw new Error("Error fetching ChatGPT response");
+        console.error('Error fetching ChatGPT response:', error);
+        throw new Error('Error fetching ChatGPT response');
     }
 }
 
 async function detectIntent(userMessage, previousIntent) {
     const apiKey = process.env.OPENAI_API_KEY;
-    const url = "https://api.openai.com/v1/chat/completions";
+    const url = 'https://api.openai.com/v1/chat/completions';
 
     // 프롬프트 설정
     const messagesForIntent = [
         {
-            role: "system",
+            role: 'system',
             content: `
-당신은 사용자 메시지를 분석하여 다음 세 가지 intent 중 하나를 반환하는 어시스턴트입니다: 1: 'OneShots', 2: 'Loops', 3: 'Presets'.
-1의 예시: "내가 올린 음악파일을 클라리넷 사운드로 바꾸고 싶어."
-2의 예시: "kpop, lofi스타일의 음악을 만들어줘"
-3의 예시: "발로란트 ost 스타일의 곡 베이스를 vsti 세럼으로만들고싶어."
-- 사용자의 메시지가 intent를 변경하는 경우, 새로운 intent를 반환합니다.
-- 그렇지 않다면, 이전 intent를 반환합니다.
-- 오직 intent만 한 단어로 반환하고, 추가적인 텍스트는 포함하지 않습니다.
-- OneShots, Loops, Presets 중 하나만을 반환하며, 다른 것은 반환하지 않습니다.
+            You are an assistant that identifies the user's intent based on their message and returns one of the following three options: 'OneShots', 'Loops', or 'Presets'.
+
+            Intent Definitions:
+            OneShots: The user is requesting a single-shot audio sample. One-shot samples are short, standalone sounds that do not loop (e.g., a drum kick or a snare hit).
+            
+            Example: "Create an R&B drum kick."
+            Loops: The user is requesting a looped audio sample. Loops are short musical sequences that repeat, often involving multiple instruments.
+            
+            Example: "Make a piano loop in a K-pop or lo-fi style."
+            Presets: The user is requesting a preset file (e.g., .fxp) to use with a plugin or software instrument.
+            
+            Example: "Design a bassline preset for a Valorant OST-style track using Serum VSTi."
+            Rules:
+            If the user's message indicates a change in intent, return the new intent.
+            If the user's message aligns with the previous intent, return the same intent.
+            Respond with only one word: OneShots, Loops, or Presets. Do not include any additional text.
+            Make sure to accurately infer intent based on the context of the user's request.
 `.trim(),
         },
         {
-            role: "user",
+            role: 'user',
             content: `
-이전 intent: ${previousIntent || "없음"}
+이전 intent: ${previousIntent || '없음'}
 사용자 메시지: ${userMessage}
 `.trim(),
         },
@@ -269,13 +256,13 @@ async function detectIntent(userMessage, previousIntent) {
 
     try {
         const response = await fetch(url, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
+                model: 'gpt-4o-mini',
                 messages: messagesForIntent,
                 temperature: 0,
                 max_tokens: 10,
@@ -284,7 +271,7 @@ async function detectIntent(userMessage, previousIntent) {
 
         if (!response.ok) {
             const error = await response.json();
-            console.error("Failed to detect intent:", error);
+            console.error('Failed to detect intent:', error);
             throw new Error(error.error.message);
         }
 
@@ -293,15 +280,15 @@ async function detectIntent(userMessage, previousIntent) {
         const detectedIntent = data.choices[0].message.content.trim();
 
         // 의도한 세 가지 중 하나인지 확인
-        if (["OneShots", "Loops", "Presets"].includes(detectedIntent)) {
+        if (['OneShots', 'Loops', 'Presets'].includes(detectedIntent)) {
             return detectedIntent;
         } else {
             // 모델이 예상치 못한 응답을 할 경우 이전 intent를 반환
-            return previousIntent || "Loops"; // 기본값 설정 가능
+            return previousIntent || 'Loops'; // 기본값 설정 가능
         }
     } catch (error) {
-        console.error("Error detecting intent:", error);
+        console.error('Error detecting intent:', error);
         // 에러 발생 시 이전 intent 또는 기본 intent 반환
-        return previousIntent || "Loops";
+        return previousIntent || 'Loops';
     }
 }

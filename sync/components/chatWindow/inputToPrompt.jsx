@@ -1,6 +1,6 @@
-import { div } from "framer-motion/client";
-import { useState } from "react";
-import styled from "styled-components";
+import { div } from 'framer-motion/client';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
     display: flex;
@@ -40,30 +40,55 @@ const Divider = styled.div`
 `;
 
 export default function InputToPrompt({ intent, input, setInput }) {
-
-    const oneShotsInstrumentList = ["Kick", "Snare", "808","Clap", "Hi-hat","Percussion","Vocal","FX","Synth","Bass",];
-    const oneShotsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B","Pop","Rock","Jazz","House","Techno"];
-    const loopsInstrumentList = ["Drum Loop", "Bass Loop", "Vox Loop", "Synth Loop", "Guitar Loop", "Piano Loop","String Loop"];
-    const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
-    const presetsInstrumentList = ["Bass Preset", "Lead Preset", "Pad Preset"];
-    const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
+    const oneShotsInstrumentList = [
+        'Kick',
+        'Snare',
+        '808',
+        'Clap',
+        'Hi-hat',
+        'Percussion',
+        'Vocal',
+        'FX',
+        'Synth',
+        'Bass',
+    ];
+    const oneShotsGenreList = ['Hiphop', 'Drum and Bass', 'Trap', 'R&B', 'Pop', 'Rock', 'Jazz', 'House', 'Techno'];
+    const loopsInstrumentList = [
+        'Drum Loop',
+        'Bass Loop',
+        'Vox Loop',
+        'Synth Loop',
+        'Guitar Loop',
+        'Piano Loop',
+        'String Loop',
+    ];
+    const loopsGenreList = ['R&B', 'Kpop', 'Hiphop', 'Drum and Bass', 'Trap', 'Drill', 'House', 'Tropical', 'Jazz'];
+    const presetsInstrumentList = [
+        'Bass Preset',
+        'Lead Preset',
+        'Pad Preset',
+        'Pluck Preset',
+        'Seq Preset',
+        'Fx Preset',
+        'Keys Preset',
+    ];
+    const presetsGenreList = ['EDM', 'House', 'Kpop', 'Hiphop', 'Trap', 'Drill', 'Pop', 'Tropical', 'Jazz'];
 
     let specificInstrumentList = [];
     let specificGenreList = [];
-    if (intent === "OneShots") {
+    if (intent === 'OneShots') {
         specificInstrumentList = oneShotsInstrumentList;
         specificGenreList = oneShotsGenreList;
-    } else if (intent === "Loops") {
+    } else if (intent === 'Loops') {
         specificInstrumentList = loopsInstrumentList;
         specificGenreList = loopsGenreList;
-    } else if (intent === "Presets") {
+    } else if (intent === 'Presets') {
         specificInstrumentList = presetsInstrumentList;
         specificGenreList = presetsGenreList;
     }
 
-
     const handleButtonClick = (instrument) => {
-        const newInput = input + " " + instrument;
+        const newInput = input + ' ' + instrument;
         setInput(newInput);
     };
 
@@ -71,20 +96,13 @@ export default function InputToPrompt({ intent, input, setInput }) {
         <Container>
             <div className="p-3">
                 <div className="flex gap-2">
-                    <img
-                        style={{ width: "30px" }}
-                        src="/img/components/instrument.svg"
-                        alt=""
-                    />
+                    <img style={{ width: '30px' }} src="/img/components/instrument.svg" alt="" />
                     <p className="font-semibold text-2xl text-white">Instrument</p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
                     {specificInstrumentList.map((instrument) => (
-                        <SelectInputButton
-                            key={instrument}
-                            onClick={() => handleButtonClick(instrument)}
-                        >
+                        <SelectInputButton key={instrument} onClick={() => handleButtonClick(instrument)}>
                             {instrument}
                         </SelectInputButton>
                     ))}
@@ -93,20 +111,13 @@ export default function InputToPrompt({ intent, input, setInput }) {
             <Divider />
             <div className="p-3">
                 <div className="flex gap-2">
-                    <img
-                        style={{ width: "30px" }}
-                        src="/img/components/genre.svg"
-                        alt=""
-                    />
+                    <img style={{ width: '30px' }} src="/img/components/genre.svg" alt="" />
                     <p className="font-semibold text-2xl text-white">Genre</p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
                     {specificGenreList.map((genre) => (
-                        <SelectInputButton
-                            key={genre}
-                            onClick={() => handleButtonClick(genre)}
-                        >
+                        <SelectInputButton key={genre} onClick={() => handleButtonClick(genre)}>
                             {genre}
                         </SelectInputButton>
                     ))}
