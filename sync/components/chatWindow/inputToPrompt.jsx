@@ -40,6 +40,7 @@ const Divider = styled.div`
 `;
 
 export default function InputToPrompt({ intent, input, setInput }) {
+
     const oneShotsInstrumentList = [
         "Kick",
         "Snare",
@@ -61,6 +62,7 @@ export default function InputToPrompt({ intent, input, setInput }) {
         "Jazz",
         "House",
         "Techno",
+
     ];
     const loopsInstrumentList = [
         "Drum Loop",
