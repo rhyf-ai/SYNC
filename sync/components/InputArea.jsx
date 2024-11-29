@@ -7,11 +7,14 @@ const InputAreaContainer = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isMinimized",
 })`
     position: relative;
+    
     display: flex;
-    width: 100%;
+    width: 80%;
+    items-align: center;
     background-color: transparent;
     border: 2px solid #e2e8f0;
     border-radius: 30px;
+    aspect-ratio: 19.5/1;
 
     /* 그라데이션 그림자 구현 */
     &::before {
@@ -66,7 +69,6 @@ const InputAreaContainer = styled.div.withConfig({
         !props.isMinimized &&
         `
         margin-top: 8px;
-        width: 1208px;
       `}
 `;
 
@@ -86,7 +88,7 @@ const InputFileButton = styled.button`
 
 const SendButton = styled.button`
     transition: background 0.3s ease, box-shadow 0.3s ease;
-    width: 50px;
+    width: 4.26%;
     aspect-ratio: 1/1;
     border-radius: 50%;
     background: linear-gradient(136deg, #2600ff 15.04%, #8975f4 86.06%);

@@ -6,6 +6,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 80%;
     margin-top: 10px;
     border-radius: 30px;
     padding: 30px;
@@ -100,7 +101,7 @@ export default function InputToPrompt({ intent, input, setInput }) {
                     <p className="font-semibold text-2xl text-white">Genre</p>
                 </div>
 
-                <div className="flex gap-3 py-5">
+                <div className="flex gap-3 py-5 flex-wrap">
                     {specificGenreList.map((genre) => (
                         <SelectInputButton
                             key={genre}

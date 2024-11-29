@@ -22,11 +22,12 @@ const Container = styled.div.withConfig({
 })`
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100%;
     position: relative;
     transition: all 0.5s ease;
     flex-shrink: 0;
-
+    padding-bottom: 20px;
     ${(props) =>
         props.isMinimized
             ? css`
@@ -83,7 +84,7 @@ export default function ChatWindow() {
 
     return (
         <Container isMinimized={isMinimized}>
-            <div style={{ height: isMinimized ? "120px" : "180px" }}></div>
+            <div style={{ height: isMinimized ? "120px" : "80px" }}></div>
             <Messages className={!isMinimized ? "hidden" : ""}>
                 {messages.map((msg, idx) => (
                     <MessageContainer key={idx} isUser={msg.role === "user"}>
@@ -104,7 +105,7 @@ export default function ChatWindow() {
             </Messages>
             {!isMinimized && (
                 <>
-                    <div className="flex justify-start mb-10 mt-12">
+                    <div className="flex justify-start mb-10 mt-12 w-4/5">
                         {intents.map((item, index) => (
                             <button
                                 key={item}
@@ -121,7 +122,7 @@ export default function ChatWindow() {
                         ))}
                     </div>
                     <p
-                        className="text-3xl my-5 font-semibold text-white"
+                        className="text-3xl my-5 font-semibold text-white w-4/5"
                         style={{ fontFamily: "Pretendard" }}
                     >
                         {intent === "OneShots"
