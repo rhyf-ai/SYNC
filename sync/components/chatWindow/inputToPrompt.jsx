@@ -40,28 +40,42 @@ const Divider = styled.div`
 `;
 
 export default function InputToPrompt({ intent, input, setInput }) {
-    const oneShotsInstrumentList = ['Kick', 'Snare', '808', 'Clap', 'Hi-hat', 'Percussion', 'Vocal', 'FX', 'Bass'];
-    const oneShotsGenreList = ['Hiphop', 'Drum and Bass', 'Trap', 'R&B', 'Pop', 'Rock', 'Jazz', 'House', 'Techno'];
+
+    const oneShotsInstrumentList = [
+        "Kick",
+        "Snare",
+        "808",
+        "Clap",
+        "Hi-hat",
+        "Percussion",
+        "Vocal",
+        "FX",
+        "Bass",
+    ];
+    const oneShotsGenreList = [
+        "Hiphop",
+        "Drum and Bass",
+        "Trap",
+        "R&B",
+        "Pop",
+        "Rock",
+        "Jazz",
+        "House",
+        "Techno",
+
+    ];
     const loopsInstrumentList = [
-        'Drum Loop',
-        'Bass Loop',
-        'Vox Loop',
-        'Synth Loop',
-        'Guitar Loop',
-        'Piano Loop',
-        'String Loop',
+        "Drum Loop",
+        "Bass Loop",
+        "Vox Loop",
+        "Synth Loop",
+        "Guitar Loop",
+        "Piano Loop",
+        "String Loop",
     ];
-    const loopsGenreList = ['R&B', 'Kpop', 'Hiphop', 'Drum and Bass', 'Trap', 'Drill', 'House', 'Tropical', 'Jazz'];
-    const presetsInstrumentList = [
-        'Bass Preset',
-        'Lead Preset',
-        'Pad Preset',
-        'Pluck Preset',
-        'Seq Preset',
-        'Fx Preset',
-        'Keys Preset',
-    ];
-    const presetsGenreList = ['EDM', 'House', 'Kpop', 'Hiphop', 'Trap', 'Drill', 'Pop', 'Tropical', 'Jazz'];
+    const loopsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
+    const presetsInstrumentList = ["Bass Preset", "Lead Preset", "Pad Preset"];
+    const presetsGenreList = ["Hiphop", "Drum and Bass", "Trap", "R&B"];
 
     let specificInstrumentList = [];
     let specificGenreList = [];
@@ -85,8 +99,14 @@ export default function InputToPrompt({ intent, input, setInput }) {
         <Container>
             <div className="p-3">
                 <div className="flex gap-2">
-                    <img style={{ width: '30px' }} src="/img/components/instrument.svg" alt="" />
-                    <p className="font-semibold text-2xl text-white">Instrument</p>
+                    <img
+                        style={{ width: "30px" }}
+                        src="/img/components/instrument.svg"
+                        alt=""
+                    />
+                    <p className="font-semibold text-2xl text-white">
+                        Instrument
+                    </p>
                 </div>
 
                 <div className="flex gap-3 py-5 flex-wrap">
